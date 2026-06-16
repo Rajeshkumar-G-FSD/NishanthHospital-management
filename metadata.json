@@ -1,0 +1,6 @@
+{
+  "name": "Maternity Care Portal",
+  "description": "A beautifully designed full-screen hero section for maternity, childbirth, and postnatal care services with a full-stack React and Express integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Primitives
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidAppointment(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 150
+          && data.contactNumber is string && data.contactNumber.size() >= 5 && data.contactNumber.size() <= 30
+          && data.guardianName is string && data.guardianName.size() > 0 && data.guardianName.size() <= 150
+          && data.department is string && data.department.size() > 0 && data.department.size() <= 100
+          && data.doctor is string && data.doctor.size() > 0 && data.doctor.size() <= 100
+          && data.date is string && data.date.size() > 0 && data.date.size() <= 50
+          && data.address is string && data.address.size() > 0 && data.address.size() <= 300
+          && (!('secondaryContactNumber' in data) || (data.secondaryContactNumber is string && data.secondaryContactNumber.size() <= 30))
+          && (!('guardianPrefix' in data) || (data.guardianPrefix is string && data.guardianPrefix.size() <= 20))
+          && (!('comments' in data) || (data.comments is string && data.comments.size() <= 1000))
+          && (!('appointmentType' in data) || (data.appointmentType is string && data.appointmentType.size() <= 50))
+          && data.createdAt == request.time;
+    }
+
+    // Rules for patient clinical appointments
+    match /appointments/{appointmentId} {
+      allow create: if isValidId(appointmentId) && isValidAppointment(incoming());
+      allow read: if true; // Allows doctor view to dynamically pull clinical records
+      allow update, delete: if false; 
+    }
+  }
+}

@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  
+  /* Redefine base slate palette so all utility background configurations translate to Milky White light mode */
+  --color-slate-950: #FCFBF9; /* Beautiful milky white paint background */
+  --color-slate-900: #F5F4EE; /* Slightly darker milky card background */
+  --color-slate-800: #E6E4DD; /* Hover selection / Borders / Select menu items */
+}
+
+/* Base Light Theme Adjustments */
+html, body {
+  background-color: #FCFBF9 !important;
+  color: #0F172A !important;
+}
+
+/* Ensure the root canvas and elements match the light theme perfectly */
+#maternity-app-root {
+  background-color: #FCFBF9 !important;
+  color: #0F172A !important;
+}
+
+/* Universal High Contrast Text visibility overrides */
+h1, h2, h3, h4, h5, h6, p, label, span, li, th, td, select, input, textarea, option, button {
+  color: #0F172A;
+}
+
+/* Force standard dark classes to map to highly visible dark colors on milky white background */
+.text-white { color: #020617 !important; }
+.text-slate-100 { color: #0F172A !important; }
+.text-slate-200 { color: #1E293B !important; }
+.text-slate-300 { color: #334155 !important; }
+.text-slate-400 { color: #475569 !important; }
+.text-slate-500 { color: #64748B !important; }
+
+/* Keep highlight gradients clear and bright but ensure text within is visible */
+h1.bg-gradient-to-r {
+  background-image: linear-gradient(to right, #be123c, #b45309, #0f766e) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+
+/* Keep fully solid colored buttons and clinical CTAs legible with full white text */
+.bg-rose-500 .text-white,
+.bg-rose-600 .text-white,
+.bg-rose-700 .text-white,
+.bg-emerald-600 .text-white,
+.bg-emerald-700 .text-white,
+.bg-purple-600 .text-white,
+.bg-indigo-600 .text-white,
+button.bg-gradient-to-r,
+button.bg-rose-500,
+button.bg-rose-600,
+button.bg-rose-700,
+button.bg-emerald-500,
+button.bg-emerald-600,
+button.bg-emerald-700,
+button.bg-purple-600,
+a.bg-gradient-to-r,
+a.bg-rose-600,
+a.bg-rose-500,
+a.bg-emerald-600,
+a.bg-purple-600,
+main button[class*="bg-rose-"],
+main button[class*="bg-emerald-"],
+main a[class*="bg-rose-"],
+main a[class*="bg-emerald-"],
+/* Prevent WhatsApp and Telehealth text & SVG symbols inside solid buttons from turning black */
+a[href*="whatsapp"] span,
+a[href*="whatsapp"] svg,
+button[title*="telehealth"] span,
+button[title*="telehealth"] svg {
+  color: #FFFFFF !important;
+}
+
+/* Specialized badge indicators and key statistics labels readability support */
+.text-rose-400 { color: #BE123C !important; }
+.text-emerald-400 { color: #0F766E !important; }
+.text-amber-400 { color: #B45309 !important; }
+.text-amber-300 { color: #B45309 !important; }
+.text-blue-400 { color: #1D4ED8 !important; }
+.text-purple-400 { color: #6D28D9 !important; }
+.text-pink-400 { color: #BE185D !important; }
+.text-indigo-400 { color: #4338CA !important; }
+
+/* Invert translucent overlays from white-glare details to highly polished deep soft charcoal dividers */
+.border-white\/5, .border-white\/10, .border-white\/15, .border-white\/20 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+.bg-white\/5, .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.03) !important;
+}
+
+/* Precise styling for inputs/textareas to prevent visual fatigue and support autofocus modes */
+input, textarea, select {
+  background-color: #FAF9F6 !important;
+  color: #020617 !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+input::placeholder, textarea::placeholder {
+  color: #64748B !important;
+}
+select option {
+  background-color: #FCFBF9 !important;
+  color: #0F172A !important;
+}
+
+/* High dynamic styling overlay for scroll player headers so they fade flawlessly from solid milky white */
+.sticky div[class*="from-slate-950"] {
+  background-image: linear-gradient(to bottom, #FCFBF9, rgba(252, 251, 249, 0)) !important;
+}
+.sticky div[class*="from-slate-950/90"] {
+  background-image: linear-gradient(to top, #FCFBF9, rgba(252, 251, 249, 0)) !important;
+}
+
+/* Interactive custom selections highlight styling mapped to brand alignment guidelines */
+::selection {
+  background-color: rgba(244, 63, 94, 0.2) !important;
+  color: #9F1239 !important;
+}
+
+/* Prevent Nishanth header logo on light backdrop from being inverted */
+#brand-logo-image {
+  filter: none !important;
+}
+
+/* Header pills background tuning for supreme modern aesthetics */
+#header-contact-btn {
+  background-color: #F5F4EE !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+#header-contact-btn span, #header-contact-btn svg {
+  color: #0F766E !important;
+}
+
+#nav-menu-trigger {
+  background-color: #FAF9F6 !important;
+  color: #0F172A !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+#nav-menu-trigger span {
+  color: #0F172A !important;
+}
+#nav-menu-dropdown-layer {
+  background-color: rgba(252, 251, 249, 0.98) !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06) !important;
+}
+#nav-menu-dropdown-layer button {
+  background-color: transparent !important;
+}
+#nav-menu-dropdown-layer button:hover {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+#nav-menu-dropdown-layer button span {
+  color: #1E293B !important;
+}
+#nav-menu-dropdown-layer button:hover span {
+  color: #0F172A !important;
+}
+
+/* Specific elements background adjustments */
+#doctor-login-panel {
+  background-color: #FAF9F6 !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+#dashboard-viewport-content {
+  background-color: #FAF9F6 !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Soft modal backdrop blur style setting */
+#booking-modal-overlay {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+#app-footer {
+  background-color: #F5F4EE !important;
+  border-top-color: rgba(15, 23, 42, 0.08) !important;
+}

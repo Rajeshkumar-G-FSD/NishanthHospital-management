@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "appointment": {
+      "title": "Appointment",
+      "description": "Medical consult appointment booking requests",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Patient full name" },
+        "contactNumber": { "type": "string", "description": "Primary contact number" },
+        "secondaryContactNumber": { "type": "string", "description": "Secondary contact number" },
+        "guardianPrefix": { "type": "string", "description": "Guardian relationship identifier" },
+        "guardianName": { "type": "string", "description": "Guardian companion name" },
+        "department": { "type": "string", "description": "Clinical department" },
+        "doctor": { "type": "string", "description": "Target consultant physician" },
+        "date": { "type": "string", "description": "Appointment preferred date" },
+        "address": { "type": "string", "description": "Patient home address" },
+        "comments": { "type": "string", "description": "Optional patient comments" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["name", "contactNumber", "guardianName", "department", "doctor", "date", "address", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/appointments/{appointmentId}": {
+      "schema": "appointment",
+      "description": "Healthcare slots reserved by community patients"
+    }
+  }
+}
