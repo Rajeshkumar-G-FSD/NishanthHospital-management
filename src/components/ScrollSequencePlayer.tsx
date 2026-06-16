@@ -16,8 +16,7 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
   const TOTAL_FRAMES = 151;
   const imageCache = useRef<HTMLImageElement[]>([]);
   const currentFrame = useRef(1);
-  const targetFrame = useRef(1);
-  const animationRef = useRef<number | null>(null);
+  const rafPending = useRef<number | null>(null);
 
   const getFrameUrl = (index: number): string => {
     const paddedIndex = String(index).padStart(3, '0');
@@ -70,105 +69,93 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
     };
   }, []);
 
-  const resizeCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    drawFrame(Math.round(currentFrame.current));
-  };
-
-  useEffect(() => {
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    return () => window.removeEventListener('resize', resizeCanvas);
-  }, [loadedCount]);
-
+  // Draw a specific frame onto the canvas, falling back to nearest loaded frame.
   const drawFrame = (frameIndex: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-
     let img = imageCache.current[frameIndex];
     if (!img || !img.complete) {
       for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
-        const fallbackLower = Math.max(1, frameIndex - offset);
-        const fallbackHigher = Math.min(TOTAL_FRAMES, frameIndex + offset);
-        if (imageCache.current[fallbackLower]?.complete) { img = imageCache.current[fallbackLower]; break; }
-        if (imageCache.current[fallbackHigher]?.complete) { img = imageCache.current[fallbackHigher]; break; }
+        const lo = Math.max(1, frameIndex - offset);
+        const hi = Math.min(TOTAL_FRAMES, frameIndex + offset);
+        if (imageCache.current[lo]?.complete) { img = imageCache.current[lo]; break; }
+        if (imageCache.current[hi]?.complete) { img = imageCache.current[hi]; break; }
       }
     }
     if (!img || !img.complete) return;
 
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
+    const cw = canvas.width;
+    const ch = canvas.height;
     const imgRatio = img.naturalWidth / img.naturalHeight;
-    const canvasRatio = canvasWidth / canvasHeight;
-    let drawWidth = canvasWidth;
-    let drawHeight = canvasHeight;
-    let offsetX = 0;
-    let offsetY = 0;
-    const isPortrait = canvasWidth < canvasHeight;
+    const canvasRatio = cw / ch;
+    let dw = cw, dh = ch, ox = 0, oy = 0;
+    const isPortrait = cw < ch;
 
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.clearRect(0, 0, cw, ch);
 
     if (isPortrait) {
       ctx.save();
       ctx.filter = 'blur(40px) brightness(0.3)';
-      let bgDrawWidth = canvasWidth;
-      let bgDrawHeight = canvasHeight;
-      let bgOffsetX = 0;
-      let bgOffsetY = 0;
-      if (imgRatio > canvasRatio) { bgDrawWidth = canvasHeight * imgRatio; bgOffsetX = (canvasWidth - bgDrawWidth) / 2; }
-      else { bgDrawHeight = canvasWidth / imgRatio; bgOffsetY = (canvasHeight - bgDrawHeight) / 2; }
-      ctx.drawImage(img, bgOffsetX, bgOffsetY, bgDrawWidth, bgDrawHeight);
+      let bw = cw, bh = ch, bx = 0, by = 0;
+      if (imgRatio > canvasRatio) { bw = ch * imgRatio; bx = (cw - bw) / 2; }
+      else { bh = cw / imgRatio; by = (ch - bh) / 2; }
+      ctx.drawImage(img, bx, by, bw, bh);
       ctx.restore();
-      drawWidth = canvasWidth;
-      drawHeight = canvasWidth / imgRatio;
-      offsetX = 0;
-      offsetY = (canvasHeight - drawHeight) / 2;
+      dw = cw; dh = cw / imgRatio; ox = 0; oy = (ch - dh) / 2;
     } else {
-      if (imgRatio > canvasRatio) { drawWidth = canvasHeight * imgRatio; offsetX = (canvasWidth - drawWidth) / 2; }
-      else { drawHeight = canvasWidth / imgRatio; offsetY = (canvasHeight - drawHeight) / 2; }
+      if (imgRatio > canvasRatio) { dw = ch * imgRatio; ox = (cw - dw) / 2; }
+      else { dh = cw / imgRatio; oy = (ch - dh) / 2; }
     }
 
-    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, ox, oy, dw, dh);
   };
 
+  // Resize canvas to match physical pixels (called once on mount + on window resize).
+  const resizeCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    drawFrame(currentFrame.current);
+  };
+
+  // Size canvas once on mount; resize on window resize only (NOT on loadedCount).
+  useEffect(() => {
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    return () => window.removeEventListener('resize', resizeCanvas);
+  }, []);
+
+  // Direct scroll → frame mapping, RAF-batched so we draw at most once per vsync.
   const handleScroll = () => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const scrollBoxHeight = rect.height - window.innerHeight;
-    const scrolledOffset = -rect.top;
-    const progress = Math.max(0, Math.min(1, scrolledOffset / scrollBoxHeight));
-    targetFrame.current = 1 + Math.round(progress * (TOTAL_FRAMES - 1));
+    const scrollable = rect.height - window.innerHeight;
+    if (scrollable <= 0) return;
+    const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
+    const frame = 1 + Math.round(progress * (TOTAL_FRAMES - 1));
+    if (frame === currentFrame.current) return;
+    currentFrame.current = frame;
+    if (rafPending.current != null) return; // already queued
+    rafPending.current = requestAnimationFrame(() => {
+      drawFrame(currentFrame.current);
+      rafPending.current = null;
+    });
   };
 
   useEffect(() => {
-    const animate = () => {
-      const diff = targetFrame.current - currentFrame.current;
-      if (Math.abs(diff) > 0.05) {
-        currentFrame.current += diff * 0.15;
-        drawFrame(Math.round(currentFrame.current));
-      } else if (currentFrame.current !== targetFrame.current) {
-        currentFrame.current = targetFrame.current;
-        drawFrame(currentFrame.current);
-      }
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
-    animationRef.current = requestAnimationFrame(animate);
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      if (rafPending.current != null) cancelAnimationFrame(rafPending.current);
     };
   }, []);
 
