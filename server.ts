@@ -12,10 +12,10 @@ async function startServer() {
     res.json({ status: "healthy", service: "Maternity Care Portal" });
   });
 
-  // Serve the frame images directly from the root
-  app.use('/frames', express.static(process.cwd(), {
+  // Serve frame images from public/frames (works in both dev and prod)
+  app.use('/frames', express.static(path.join(process.cwd(), 'public', 'frames'), {
     maxAge: '1d',
-    immutable: true
+    immutable: true,
   }));
 
   const httpServer = http.createServer(app);
