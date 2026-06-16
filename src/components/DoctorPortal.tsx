@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  KeyRound, 
-  Users, 
-  Search, 
-  Calendar, 
-  TrendingUp, 
-  LogOut, 
-  MessageSquare, 
-  MapPin, 
-  Phone, 
-  ShieldCheck, 
-  ClipboardList, 
-  Filter, 
-  RefreshCw, 
+import {
+  KeyRound,
+  Users,
+  Search,
+  Calendar,
+  TrendingUp,
+  LogOut,
+  MessageSquare,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  ClipboardList,
+  Filter,
+  RefreshCw,
   HeartHandshake,
   Plus,
   Trash2,
@@ -35,6 +35,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
+import { getAll, addDocument, updateDocument, deleteDocument } from '../admin/services/firebaseService';
 
 // Model interface extension for viewing Firebase appointments
 interface DirectBookingRecord {
@@ -167,12 +168,36 @@ export default function DoctorPortal() {
   ]);
   const [medicineSearch, setMedicineSearch] = useState('');
 
-  // Load appointments if authenticated & current view includes Appointments
+  // Load all data from Firebase when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       fetchClinicalAppointments();
+      loadEmployeesFromDB();
+      loadAttendanceFromDB();
+      loadMedicinesFromDB();
     }
   }, [isAuthenticated]);
+
+  const loadEmployeesFromDB = async () => {
+    try {
+      const data = await getAll('doctorStaff');
+      if (data.length > 0) setEmployees(data as Employee[]);
+    } catch { /* keep defaults */ }
+  };
+
+  const loadAttendanceFromDB = async () => {
+    try {
+      const data = await getAll('attendance');
+      if (data.length > 0) setAttendance(data as AttendanceRecord[]);
+    } catch { /* keep defaults */ }
+  };
+
+  const loadMedicinesFromDB = async () => {
+    try {
+      const data = await getAll('medicines');
+      if (data.length > 0) setMedicines(data as MedicineItem[]);
+    } catch { /* keep defaults */ }
+  };
 
   const fetchClinicalAppointments = async () => {
     setIsLoading(true);
@@ -326,12 +351,11 @@ If you have any clinical updates or wish to pre-confirm, please reply to this me
   });
 
   // Action methods for Employee Tab state
-  const handleAddEmployee = (e: React.FormEvent) => {
+  const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEmpName.trim() || !newEmpRole.trim()) return;
 
-    const newEmp: Employee = {
-      id: 'emp_' + Date.now(),
+    const empData = {
       name: newEmpName.trim(),
       role: newEmpRole.trim(),
       department: newEmpDept,
@@ -341,20 +365,24 @@ If you have any clinical updates or wish to pre-confirm, please reply to this me
       joinedDate: new Date().toISOString().split('T')[0]
     };
 
-    setEmployees([...employees, newEmp]);
-    
-    // Auto add to attendance roster for today as well
-    const newAtt: AttendanceRecord = {
-      id: 'att_' + Date.now(),
-      employeeName: newEmp.name,
-      role: newEmp.role,
-      checkInTime: newEmp.status === 'On-Duty' ? '09:00 AM' : '--:--',
-      status: newEmp.status === 'On-Duty' ? 'Present' : 'On-Leave',
-      hoursEstimate: newEmp.status === 'On-Duty' ? 5.0 : 0
-    };
-    setAttendance([...attendance, newAtt]);
+    try {
+      const newId = await addDocument('doctorStaff', empData);
+      const newEmp: Employee = { id: newId, ...empData };
+      setEmployees(prev => [...prev, newEmp]);
 
-    // Reset fields
+      const attData = {
+        employeeName: newEmp.name,
+        role: newEmp.role,
+        checkInTime: newEmp.status === 'On-Duty' ? '09:00 AM' : '--:--',
+        status: newEmp.status === 'On-Duty' ? 'Present' : 'On-Leave',
+        hoursEstimate: newEmp.status === 'On-Duty' ? 5.0 : 0
+      };
+      const attId = await addDocument('attendance', attData);
+      setAttendance(prev => [...prev, { id: attId, ...attData } as AttendanceRecord]);
+    } catch (err) {
+      console.error('Failed to save employee to Firebase', err);
+    }
+
     setNewEmpName('');
     setNewEmpRole('');
     setNewEmpEmail('');
@@ -363,22 +391,30 @@ If you have any clinical updates or wish to pre-confirm, please reply to this me
     setShowAddEmpModal(false);
   };
 
-  const handleToggleEmployeeStatus = (empId: string) => {
-    setEmployees(employees.map(emp => {
-      if (emp.id === empId) {
-        const nextStatus: Record<string, 'On-Duty' | 'Off-Duty' | 'On-Leave'> = {
-          'On-Duty': 'Off-Duty',
-          'Off-Duty': 'On-Leave',
-          'On-Leave': 'On-Duty'
-        };
-        return { ...emp, status: nextStatus[emp.status] };
-      }
-      return emp;
-    }));
+  const handleToggleEmployeeStatus = async (empId: string) => {
+    const emp = employees.find(e => e.id === empId);
+    if (!emp) return;
+    const nextStatus: Record<string, 'On-Duty' | 'Off-Duty' | 'On-Leave'> = {
+      'On-Duty': 'Off-Duty',
+      'Off-Duty': 'On-Leave',
+      'On-Leave': 'On-Duty'
+    };
+    const newStatus = nextStatus[emp.status];
+    setEmployees(prev => prev.map(e => e.id === empId ? { ...e, status: newStatus } : e));
+    try {
+      await updateDocument('doctorStaff', empId, { status: newStatus });
+    } catch (err) {
+      console.error('Failed to update employee status in Firebase', err);
+    }
   };
 
-  const handleDeleteEmployee = (empId: string) => {
-    setEmployees(employees.filter(emp => emp.id !== empId));
+  const handleDeleteEmployee = async (empId: string) => {
+    setEmployees(prev => prev.filter(e => e.id !== empId));
+    try {
+      await deleteDocument('doctorStaff', empId);
+    } catch (err) {
+      console.error('Failed to delete employee from Firebase', err);
+    }
   };
 
   // Action methods for Social Media schedule tab state
@@ -416,29 +452,31 @@ If you have any clinical updates or wish to pre-confirm, please reply to this me
   };
 
   // Action methods for Attendance tracker tab state
-  const handleUpdateAttendanceStatus = (attId: string, nextStatus: 'Present' | 'Absent' | 'On-Leave' | 'Late') => {
-    setAttendance(attendance.map(record => {
-      if (record.id === attId) {
-        return { 
-          ...record, 
-          status: nextStatus,
-          checkInTime: nextStatus === 'Present' ? '08:00 AM' : nextStatus === 'Late' ? '09:30 AM' : '--:--',
-          hoursEstimate: (nextStatus === 'Present' || nextStatus === 'Late') ? 8.0 : 0
-        };
-      }
-      return record;
-    }));
+  const handleUpdateAttendanceStatus = async (attId: string, nextStatus: 'Present' | 'Absent' | 'On-Leave' | 'Late') => {
+    const update = {
+      status: nextStatus,
+      checkInTime: nextStatus === 'Present' ? '08:00 AM' : nextStatus === 'Late' ? '09:30 AM' : '--:--',
+      hoursEstimate: (nextStatus === 'Present' || nextStatus === 'Late') ? 8.0 : 0
+    };
+    setAttendance(prev => prev.map(r => r.id === attId ? { ...r, ...update } : r));
+    try {
+      await updateDocument('attendance', attId, update);
+    } catch (err) {
+      console.error('Failed to update attendance in Firebase', err);
+    }
   };
 
   // Action methods for Medicine inventory management
-  const adjustMedicineStock = (medId: string, amount: number) => {
-    setMedicines(medicines.map(med => {
-      if (med.id === medId) {
-        const newStock = Math.max(0, med.stock + amount);
-        return { ...med, stock: newStock };
-      }
-      return med;
-    }));
+  const adjustMedicineStock = async (medId: string, amount: number) => {
+    const med = medicines.find(m => m.id === medId);
+    if (!med) return;
+    const newStock = Math.max(0, med.stock + amount);
+    setMedicines(prev => prev.map(m => m.id === medId ? { ...m, stock: newStock } : m));
+    try {
+      await updateDocument('medicines', medId, { stock: newStock });
+    } catch (err) {
+      console.error('Failed to update medicine stock in Firebase', err);
+    }
   };
 
   return (
