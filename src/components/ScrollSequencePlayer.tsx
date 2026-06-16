@@ -28,6 +28,9 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
     let loaded = 0;
     const imagesToLoad: HTMLImageElement[] = [];
 
+    // Safety timeout — dismiss preloader after 5 s no matter what
+    const safetyTimer = setTimeout(() => setIsPreloading(false), 5000);
+
     const firstImg = new Image();
     firstImg.src = getFrameUrl(1);
     firstImg.onload = () => {
@@ -35,27 +38,34 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
       loaded++;
       setLoadedCount(1);
       drawFrame(1);
+      // Show content as soon as frame 1 is ready — rest load in background
+      setIsPreloading(false);
+      clearTimeout(safetyTimer);
+    };
+    firstImg.onerror = () => {
+      loaded++;
+      setLoadedCount(loaded);
+      setIsPreloading(false);
+      clearTimeout(safetyTimer);
     };
 
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      if (i === 1) continue;
+    for (let i = 2; i <= TOTAL_FRAMES; i++) {
       const img = new Image();
       img.src = getFrameUrl(i);
       img.onload = () => {
         imageCache.current[i] = img;
         loaded++;
         setLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) setIsPreloading(false);
       };
       img.onerror = () => {
         loaded++;
         setLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) setIsPreloading(false);
       };
       imagesToLoad.push(img);
     }
 
     return () => {
+      clearTimeout(safetyTimer);
       imagesToLoad.forEach(img => { img.onload = null; img.onerror = null; });
     };
   }, []);
