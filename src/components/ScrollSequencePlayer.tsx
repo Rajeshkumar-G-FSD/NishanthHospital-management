@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
+import { gsap } from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { Heart, Phone, Sparkles } from 'lucide-react';
+import SplitText from './SplitText';
 
 interface ScrollSequencePlayerProps {
   onOpenBooking: () => void;
@@ -17,6 +20,12 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
   const imageCache = useRef<HTMLImageElement[]>([]);
   const currentFrame = useRef(1);
   const rafPending = useRef<number | null>(null);
+
+  // Hero GSAP refs
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const h2Ref = useRef<HTMLHeadingElement>(null);
+  const dividerRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   const getFrameUrl = (index: number): string => {
     const paddedIndex = String(index).padStart(3, '0');
@@ -159,6 +168,23 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
     };
   }, []);
 
+  // Animate badge, h2 gradient, divider, and CTAs via a GSAP timeline.
+  // H1 and subtitle are handled by the SplitText component directly.
+  useGSAP(() => {
+    if (isPreloading) return;
+    // Immediately snap initial states so nothing flashes before animation
+    gsap.set(badgeRef.current, { opacity: 0, y: -15 });
+    gsap.set(h2Ref.current, { clipPath: 'inset(0 100% 0 0)' });
+    gsap.set(dividerRef.current, { scaleX: 0, transformOrigin: 'left center' });
+    gsap.set(ctaRef.current, { opacity: 0, y: 16 });
+
+    gsap.timeline({ defaults: { ease: 'power3.out' } })
+      .to(badgeRef.current, { opacity: 1, y: 0, duration: 0.55 })
+      .to(h2Ref.current,   { clipPath: 'inset(0 0% 0 0)', duration: 0.85, ease: 'power2.inOut' }, 0.65)
+      .to(dividerRef.current, { scaleX: 1, duration: 0.5 }, 1.05)
+      .to(ctaRef.current,  { opacity: 1, y: 0, duration: 0.6 }, 1.25);
+  }, { dependencies: [isPreloading] });
+
   const progressPercentage = Math.round((loadedCount / TOTAL_FRAMES) * 100);
 
   return (
@@ -250,14 +276,13 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
           <div className="px-6 sm:px-10 md:px-14 lg:px-20 pt-8 md:pt-10 max-w-2xl">
 
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
+            <div
+              ref={badgeRef}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-5"
               style={{
                 background: 'rgba(220,38,38,0.07)',
                 border: '1px solid rgba(220,38,38,0.18)',
+                opacity: 0,
               }}
             >
               <Sparkles className="w-3 h-3 shrink-0" style={{ color: '#DC2626' }} />
@@ -267,26 +292,28 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
               >
                 Erode's Premier Women &amp; Child Care · Est. 1999
               </span>
-            </motion.div>
+            </div>
 
-            {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="font-black leading-[1.0] tracking-tight mb-2"
-              style={{
-                fontSize: 'clamp(2.6rem, 6vw, 5.5rem)',
-                color: '#1D1D1F',
-              }}
-            >
-              Expert Care
-            </motion.h1>
+            {/* Headline — SplitText animates each char up with stagger */}
+            <SplitText
+              text="Expert Care"
+              tag="h1"
+              className="font-black leading-[1.0] tracking-tight mb-2 block"
+              splitType="chars"
+              from={{ opacity: 0, y: 55 }}
+              to={{ opacity: 1, y: 0, delay: 0.2 }}
+              delay={45}
+              duration={0.75}
+              ease="power3.out"
+              threshold={0}
+              rootMargin="0px"
+              textAlign="left"
+              style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)', color: '#1D1D1F' }}
+            />
 
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            {/* Gradient h2 — clip-path wipe reveal via GSAP timeline */}
+            <h2
+              ref={h2Ref}
               className="font-black leading-[1.0] tracking-tight italic mb-5"
               style={{
                 fontSize: 'clamp(2.6rem, 6vw, 5.5rem)',
@@ -294,37 +321,41 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
+                clipPath: 'inset(0 100% 0 0)',
               }}
             >
               Meets Affordability
-            </motion.h2>
+            </h2>
 
             {/* Divider */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.4, duration: 0.6, ease: 'easeOut' }}
-              className="h-[2px] w-14 rounded-full mb-5 origin-left"
-              style={{ background: 'linear-gradient(to right, #DC2626, #F59E0B)' }}
+            <div
+              ref={dividerRef}
+              className="h-[2px] w-14 rounded-full mb-5"
+              style={{ background: 'linear-gradient(to right, #DC2626, #F59E0B)', transform: 'scaleX(0)', transformOrigin: 'left center' }}
             />
 
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.65 }}
-              className="text-sm sm:text-base font-medium leading-relaxed mb-7 max-w-sm"
+            {/* Subtitle — SplitText animates each word */}
+            <SplitText
+              text="25+ years of trusted excellence in maternity, fertility & pediatric care in Erode, Tamil Nadu"
+              tag="p"
+              className="text-sm sm:text-base font-medium leading-relaxed mb-7 max-w-sm block"
+              splitType="words"
+              from={{ opacity: 0, y: 18 }}
+              to={{ opacity: 1, y: 0, delay: 0.85 }}
+              delay={38}
+              duration={0.6}
+              ease="power2.out"
+              threshold={0}
+              rootMargin="0px"
+              textAlign="left"
               style={{ color: '#3D3D3F' }}
-            >
-              25+ years of trusted excellence in maternity, fertility &amp; pediatric care in Erode, Tamil Nadu
-            </motion.p>
+            />
 
             {/* CTA buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.65, duration: 0.6 }}
+            <div
+              ref={ctaRef}
               className="flex flex-wrap gap-3 pointer-events-auto"
+              style={{ opacity: 0 }}
             >
               <button
                 onClick={onOpenBooking}
@@ -379,7 +410,7 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
                 <Phone className="w-3.5 h-3.5 shrink-0" style={{ color: '#DC2626' }} />
                 <span>Emergency 24/7</span>
               </a>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>
