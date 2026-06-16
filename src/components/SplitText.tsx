@@ -9,6 +9,7 @@ gsap.registerPlugin(ScrollTrigger, GSAPSplitText, useGSAP);
 export interface SplitTextProps {
   text: string;
   className?: string;
+  style?: React.CSSProperties;
   delay?: number;
   duration?: number;
   ease?: string;
@@ -25,6 +26,7 @@ export interface SplitTextProps {
 export function SplitText({
   text,
   className = '',
+  style: styleProp,
   delay = 50,
   duration = 1.25,
   ease = 'power3.out',
@@ -164,7 +166,8 @@ export function SplitText({
   const style: React.CSSProperties = {
     textAlign: textAlign as any,
     wordWrap: 'break-word',
-    willChange: 'transform, opacity'
+    willChange: 'transform, opacity',
+    ...styleProp,
   };
   const classes = `split-parent overflow-hidden inline-block whitespace-normal ${className}`;
   const Tag = (tag || 'p') as any;

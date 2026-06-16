@@ -40,7 +40,7 @@ function AnimatedBio({ text }: AnimatedBioProps) {
   );
 }
 
-function AnimatedTitle({ text, className }: { text: string; className?: string }) {
+function AnimatedTitle({ text, className, style }: { text: string; className?: string; style?: React.CSSProperties }) {
   const containerRef = React.useRef<HTMLHeadingElement>(null);
 
   useGSAP(() => {
@@ -60,7 +60,7 @@ function AnimatedTitle({ text, className }: { text: string; className?: string }
     return () => { split.revert(); };
   }, [text]);
 
-  return <h2 ref={containerRef} className={className}>{text}</h2>;
+  return <h2 ref={containerRef} className={className} style={style}>{text}</h2>;
 }
 
 export interface TeamMember {

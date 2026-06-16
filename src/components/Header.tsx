@@ -6,6 +6,17 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+function useScrolled(threshold = 60) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > threshold);
+    handler();
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, [threshold]);
+  return scrolled;
+}
+
 interface HeaderProps {
   onContactClick: () => void;
   currentView: 'home' | 'about' | 'why-choose' | 'magizh' | 'contact' | 'doctor' | 'doctors';
@@ -25,6 +36,10 @@ const MENU_ITEMS = [
 export default function Header({ onContactClick, currentView, onViewChange }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const scrolled = useScrolled(80);
+
+  const isHero = currentView === 'home' || currentView === 'contact';
+  const heroGlass = isHero && !scrolled;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -42,20 +57,27 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
       initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-50 select-none"
+      className="fixed top-0 left-0 right-0 z-50 select-none transition-all duration-500"
       style={{
-        background: 'rgba(255,255,255,0.88)',
-        backdropFilter: 'saturate(180%) blur(20px)',
-        WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-        borderBottom: '1px solid rgba(0,0,0,0.06)',
+        background: heroGlass ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.94)',
+        backdropFilter: 'saturate(200%) blur(28px)',
+        WebkitBackdropFilter: 'saturate(200%) blur(28px)',
+        borderBottomLeftRadius: '24px',
+        borderBottomRightRadius: '24px',
+        boxShadow: heroGlass
+          ? '0 8px 32px rgba(0,0,0,0.18)'
+          : '0 8px 32px rgba(0,0,0,0.10), 0 1px 0 rgba(255,255,255,0.6) inset',
       }}
     >
       {/* ── TOP INFO BAR ──────────────────────────────────────── */}
       <div
-        className="hidden md:flex w-full h-9 items-center justify-between px-8 lg:px-14 text-xs"
-        style={{ borderBottom: '1px solid rgba(0,0,0,0.05)', color: '#6E6E73' }}
+        className="hidden md:flex w-full h-9 items-center justify-between px-8 lg:px-14 text-xs transition-colors duration-500"
+        style={{
+          borderBottom: `1px solid ${heroGlass ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.05)'}`,
+          color: heroGlass ? 'rgba(255,255,255,0.7)' : '#6E6E73',
+        }}
       >
-        <span className="font-medium" style={{ color: '#6E6E73' }}>
+        <span className="font-medium">
           Welcome to Nishanth Hospital — Erode's Premier Women &amp; Child Care Centre
         </span>
 
@@ -63,15 +85,13 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
           <a
             href="mailto:Nishanthhospitalerode@gmail.com"
             className="flex items-center gap-1.5 font-medium transition-colors"
-            style={{ color: '#6E6E73' }}
-            onMouseEnter={e => ((e.target as HTMLElement).closest('a')!).style.color = '#007AFF'}
-            onMouseLeave={e => ((e.target as HTMLElement).closest('a')!).style.color = '#6E6E73'}
+            style={{ color: 'inherit' }}
           >
             <Mail className="w-3.5 h-3.5" />
             <span>Nishanthhospitalerode@gmail.com</span>
           </a>
 
-          <div className="flex items-center gap-3" style={{ color: '#6E6E73' }}>
+          <div className="flex items-center gap-3">
             <a href="https://www.facebook.com/nishanthospital/" target="_blank" rel="noopener noreferrer"
               className="hover:text-[#1877F2] transition-colors" aria-label="Facebook">
               <Facebook className="w-3.5 h-3.5" />
@@ -110,24 +130,29 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
         <nav className="hidden lg:flex items-center gap-1" id="desktop-nav-links">
           {MENU_ITEMS.filter(i => i.id !== 'doctor').map((item) => {
             const isActive = item.id === currentView;
+            const defaultColor = heroGlass ? 'rgba(255,255,255,0.85)' : '#1D1D1F';
             return (
               <button
                 key={item.id}
                 onClick={() => onViewChange(item.id)}
                 className="relative px-3.5 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-200 cursor-pointer outline-none"
                 style={{
-                  color: isActive ? '#DC2626' : '#1D1D1F',
-                  background: isActive ? 'rgba(220,38,38,0.06)' : 'transparent',
+                  color: isActive ? '#FF6B6B' : defaultColor,
+                  background: isActive
+                    ? heroGlass ? 'rgba(255,255,255,0.12)' : 'rgba(220,38,38,0.06)'
+                    : 'transparent',
                 }}
                 onMouseEnter={e => {
                   if (!isActive) {
-                    (e.currentTarget as HTMLButtonElement).style.color = '#DC2626';
-                    (e.currentTarget as HTMLButtonElement).style.background = 'rgba(220,38,38,0.05)';
+                    (e.currentTarget as HTMLButtonElement).style.color = heroGlass ? '#fff' : '#DC2626';
+                    (e.currentTarget as HTMLButtonElement).style.background = heroGlass
+                      ? 'rgba(255,255,255,0.12)'
+                      : 'rgba(220,38,38,0.05)';
                   }
                 }}
                 onMouseLeave={e => {
                   if (!isActive) {
-                    (e.currentTarget as HTMLButtonElement).style.color = '#1D1D1F';
+                    (e.currentTarget as HTMLButtonElement).style.color = defaultColor;
                     (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
                   }
                 }}
@@ -137,7 +162,7 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
                 {isActive && (
                   <span
                     className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full"
-                    style={{ background: '#DC2626' }}
+                    style={{ background: heroGlass ? '#FF6B6B' : '#DC2626' }}
                   />
                 )}
               </button>
@@ -148,23 +173,34 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
         {/* Right: Phone + CTA + Hamburger */}
         <div className="flex items-center gap-3">
 
-          {/* Phone widget */}
-          <button
-            onClick={onContactClick}
-            className="hidden md:flex items-center gap-2.5 group cursor-pointer"
+          {/* Emergency Call widget — click-to-call, number never visible */}
+          <a
+            href="tel:+919842960060"
+            className="hidden md:flex items-center gap-2.5 group cursor-pointer no-underline"
             id="header-phone-widget"
+            aria-label="Emergency Call"
+            onMouseEnter={e => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              (el.querySelector('.phone-circle') as HTMLElement).style.background = '#DC2626';
+              (el.querySelector('.phone-icon') as HTMLElement).style.color = '#fff';
+            }}
+            onMouseLeave={e => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              (el.querySelector('.phone-circle') as HTMLElement).style.background = 'rgba(220,38,38,0.09)';
+              (el.querySelector('.phone-icon') as HTMLElement).style.color = '#DC2626';
+            }}
           >
             <div
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200"
-              style={{ background: 'rgba(220,38,38,0.08)' }}
+              className="phone-circle w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200"
+              style={{ background: 'rgba(220,38,38,0.09)' }}
             >
-              <Phone className="w-4 h-4" style={{ color: '#DC2626' }} />
+              <Phone className="phone-icon w-4 h-4 transition-colors duration-200" style={{ color: '#DC2626' }} />
             </div>
             <div className="hidden xl:flex flex-col text-left leading-tight">
-              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#AEAEB2' }}>Emergency</span>
-              <span className="text-[13px] font-bold tracking-tight" style={{ color: '#1D1D1F' }}>+91 98429 60060</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#AEAEB2' }}>24 / 7</span>
+              <span className="text-[13px] font-bold tracking-tight" style={{ color: '#DC2626' }}>Emergency Call</span>
             </div>
-          </button>
+          </a>
 
           {/* Book Appointment CTA */}
           <button
@@ -189,16 +225,20 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
           <button
             onClick={() => onViewChange('doctor')}
             className="hidden xl:flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer"
-            style={{ color: '#6E6E73', background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)' }}
+            style={{
+              color: heroGlass ? 'rgba(255,255,255,0.7)' : '#6E6E73',
+              background: heroGlass ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.03)',
+              border: `1px solid ${heroGlass ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)'}`,
+            }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = '#007AFF';
-              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,122,255,0.2)';
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,122,255,0.05)';
+              (e.currentTarget as HTMLButtonElement).style.color = heroGlass ? '#fff' : '#007AFF';
+              (e.currentTarget as HTMLButtonElement).style.borderColor = heroGlass ? 'rgba(255,255,255,0.3)' : 'rgba(0,122,255,0.2)';
+              (e.currentTarget as HTMLButtonElement).style.background = heroGlass ? 'rgba(255,255,255,0.15)' : 'rgba(0,122,255,0.05)';
             }}
             onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.color = '#6E6E73';
-              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,0,0,0.06)';
-              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.03)';
+              (e.currentTarget as HTMLButtonElement).style.color = heroGlass ? 'rgba(255,255,255,0.7)' : '#6E6E73';
+              (e.currentTarget as HTMLButtonElement).style.borderColor = heroGlass ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)';
+              (e.currentTarget as HTMLButtonElement).style.background = heroGlass ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.03)';
             }}
           >
             <ClipboardList className="w-3.5 h-3.5" />
@@ -211,8 +251,10 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 rounded-xl transition-all cursor-pointer outline-none"
               style={{
-                background: isMenuOpen ? 'rgba(220,38,38,0.08)' : 'rgba(0,0,0,0.04)',
-                border: '1px solid rgba(0,0,0,0.08)',
+                background: isMenuOpen
+                  ? 'rgba(220,38,38,0.15)'
+                  : heroGlass ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.04)',
+                border: `1px solid ${heroGlass ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.08)'}`,
               }}
               id="mobile-menu-trigger"
               aria-label="Toggle menu"
@@ -224,7 +266,7 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
                   </motion.span>
                 ) : (
                   <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                    <MenuIcon className="w-4.5 h-4.5" style={{ color: '#1D1D1F' }} />
+                    <MenuIcon className="w-4.5 h-4.5" style={{ color: heroGlass ? '#fff' : '#1D1D1F' }} />
                   </motion.span>
                 )}
               </AnimatePresence>
@@ -275,7 +317,7 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
             <div className="px-5 py-4 space-y-2.5" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
               <a href="tel:+919842960060" className="flex items-center gap-3 text-sm font-semibold" style={{ color: '#DC2626' }}>
                 <Phone className="w-4 h-4" />
-                <span>+91 98429 60060</span>
+                <span>Emergency Call</span>
               </a>
               <a href="mailto:Nishanthhospitalerode@gmail.com" className="flex items-center gap-3 text-xs" style={{ color: '#6E6E73' }}>
                 <Mail className="w-4 h-4" />
