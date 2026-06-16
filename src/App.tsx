@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Facebook, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import Header from './components/Header';
 import BookingModal from './components/BookingModal';
 import ScrollSequencePlayer from './components/ScrollSequencePlayer';
@@ -30,7 +31,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     name: 'Dr. Abhishant Padmanaban',
     role: 'Consultant Urologist & Andrologist',
     image: 'https://i.postimg.cc/G9wkSrxf/Dr-Abhishant.avif',
-    bio: 'An alumnus of the prestigious Madras Medical College and a Double Gold Medalist (UG & PG), Dr. Abhishant holds a fellowship in andrology. He specializes in laser urology and microscopic male infertility procedures, offering advanced care for men’s reproductive and urological health.',
+    bio: 'An alumnus of the prestigious Madras Medical College and a Double Gold Medalist (UG & PG), Dr. Abhishant holds a fellowship in andrology. He specializes in laser urology and microscopic male infertility procedures, offering advanced care for men\'s reproductive and urological health.',
   },
   {
     id: '4',
@@ -84,48 +85,44 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-rose-500/25 selection:text-rose-200" id="maternity-app-root">
-      
-      {/* Main Header Component with navigation actions, current view, and view setter */}
-      <Header 
-        onContactClick={handleOpenModal} 
+    <div
+      className="relative min-h-screen flex flex-col"
+      style={{ backgroundColor: '#F5F5F7', color: '#1D1D1F' }}
+      id="maternity-app-root"
+    >
+      <Header
+        onContactClick={handleOpenModal}
         currentView={currentView}
         onViewChange={(view) => {
           setCurrentView(view);
           if (view === 'contact') {
             setTimeout(() => {
               const el = document.getElementById('contact-section');
-              if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 100);
           } else {
-            // Scroll up so we enter from the top for both views
             window.scrollTo({ top: 0, behavior: 'instant' as any });
           }
         }}
       />
 
-      {/* Dynamic View rendering depending on header click tabs */}
       <main className="w-full grow relative z-10 animate-fade-in" id="main-content-area">
         <AnimatePresence mode="wait">
           {currentView === 'home' || currentView === 'contact' ? (
             <motion.div
               key="home"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
               className="w-full flex flex-col"
             >
-              {/* Home view containing the immersive sequence walk and core consultants */}
               <ScrollSequencePlayer onOpenBooking={handleOpenModal} />
-              
-              <TeamCarousel 
-                members={TEAM_MEMBERS} 
-                title="Meet Our Core Team of Consultants" 
+
+              <TeamCarousel
+                members={TEAM_MEMBERS}
+                title="Meet Our Specialists"
                 titleSize="md"
-                titleColor="rgb(244, 63, 94)"
                 autoPlay={5000}
                 grayscaleEffect={false}
                 className="relative z-20"
@@ -137,21 +134,17 @@ export default function App() {
           ) : currentView === 'doctors' ? (
             <motion.div
               key="doctors"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="w-full pt-28 pb-16 bg-slate-950 flex flex-col justify-center relative min-h-[85vh]"
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              className="w-full pt-32 pb-16 flex flex-col justify-center relative min-h-[85vh]"
+              style={{ backgroundColor: '#F5F5F7' }}
             >
-              {/* Visual background atmospheric elements to match the other pages */}
-              <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-rose-500/5 rounded-full filter blur-3xl pointer-events-none" />
-              <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-500/5 rounded-full filter blur-3xl pointer-events-none" />
-              
-              <TeamCarousel 
-                members={TEAM_MEMBERS} 
-                title="Meet Our Core Team of Consultants" 
+              <TeamCarousel
+                members={TEAM_MEMBERS}
+                title="Meet Our Specialists"
                 titleSize="md"
-                titleColor="rgb(244, 63, 94)"
                 autoPlay={5000}
                 grayscaleEffect={false}
                 className="border-none py-0 bg-transparent relative z-10"
@@ -161,71 +154,143 @@ export default function App() {
           ) : currentView === 'about' ? (
             <motion.div
               key="about"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
               className="w-full"
             >
-              {/* Robust state AboutUs page presenting 25 years of excellence and specialized hospital insights */}
               <AboutView onOpenBooking={handleOpenModal} />
             </motion.div>
           ) : currentView === 'why-choose' ? (
             <motion.div
               key="why-choose"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
               className="w-full"
             >
-              {/* High-impact clinical stats and trust factor insights showing 30,000+ safe deliveries */}
               <WhyChooseView onOpenBooking={handleOpenModal} />
             </motion.div>
           ) : currentView === 'magizh' ? (
             <motion.div
               key="magizh"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
               className="w-full"
             >
-              {/* Upcoming specialty fertility care block providing hope for aspiring parents */}
               <MagizhView onOpenBooking={handleOpenModal} />
             </motion.div>
           ) : (
             <motion.div
               key="doctor-portal"
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
               className="w-full"
             >
-              {/* Real-time clinician dashboard to view live Firestore appointments list */}
               <DoctorPortal />
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      {/* Elegant, humble, literal footer */}
-      <footer className="w-full py-4 text-center border-t border-white/5 bg-slate-950 text-[11px] font-sans font-medium text-slate-500 z-25 relative" id="app-footer">
-        © 2026 Nishant Hospital. All rights reserved. Developed by{' '}
-        <a 
-          href="https://www.datazync.com" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="inline-block text-rose-400 hover:text-amber-400 font-semibold transition-all duration-300 hover:scale-105 hover:underline decoration-rose-400 hover:decoration-amber-400 underline-offset-4"
-        >
-          www.datazync.com
-        </a>
+      {/* Premium Apple-style footer */}
+      <footer className="w-full border-t" style={{ backgroundColor: '#F5F5F7', borderTopColor: '#D2D2D7' }} id="app-footer">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand column */}
+          <div className="md:col-span-2 space-y-4">
+            <img
+              src="https://i.postimg.cc/d1Mjps1w/Nishanth-logo.avif"
+              alt="Nishanth Hospital"
+              className="h-10 w-auto object-contain"
+              referrerPolicy="no-referrer"
+            />
+            <p className="text-sm leading-relaxed" style={{ color: '#6E6E73' }}>
+              Nishanth Hospital is Erode's trusted centre for women and child care, delivering 25+ years of compassionate, expert-led medical services.
+            </p>
+            <div className="flex items-center gap-3 pt-1">
+              <a href="https://www.facebook.com/nishanthospital/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
+                style={{ background: '#E5E5EA', color: '#6E6E73' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#1877F2'; (e.currentTarget as HTMLElement).style.color = '#fff'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#E5E5EA'; (e.currentTarget as HTMLElement).style.color = '#6E6E73'; }}>
+                <Facebook className="w-3.5 h-3.5" />
+              </a>
+              <a href="https://www.instagram.com/dr.sruthi_herhealth" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
+                style={{ background: '#E5E5EA', color: '#6E6E73' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#E1306C'; (e.currentTarget as HTMLElement).style.color = '#fff'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#E5E5EA'; (e.currentTarget as HTMLElement).style.color = '#6E6E73'; }}>
+                <Instagram className="w-3.5 h-3.5" />
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
+                style={{ background: '#E5E5EA', color: '#6E6E73' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#FF0000'; (e.currentTarget as HTMLElement).style.color = '#fff'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#E5E5EA'; (e.currentTarget as HTMLElement).style.color = '#6E6E73'; }}>
+                <Youtube className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick links */}
+          <div className="space-y-3">
+            <h5 className="text-sm font-semibold" style={{ color: '#1D1D1F' }}>Services</h5>
+            <ul className="space-y-2 text-sm" style={{ color: '#6E6E73' }}>
+              {['Maternity Care', 'Fertility Clinic', 'Fetal Medicine', 'Pediatrics', 'Gynecology', 'Urology'].map(s => (
+                <li key={s}><span className="hover:text-rose-600 cursor-pointer transition-colors">{s}</span></li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div className="space-y-3">
+            <h5 className="text-sm font-semibold" style={{ color: '#1D1D1F' }}>Contact</h5>
+            <ul className="space-y-2.5 text-sm" style={{ color: '#6E6E73' }}>
+              <li className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-rose-500" />
+                <span>279, EVN Rd, Erode, Tamil Nadu 638009</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 shrink-0 text-rose-500" />
+                <a href="tel:+919842960060" className="hover:text-rose-600 transition-colors font-medium">+91 98429 60060</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4 shrink-0 text-rose-500" />
+                <a href="mailto:Nishanthhospitalerode@gmail.com" className="hover:text-rose-600 transition-colors break-all">
+                  Nishanthhospitalerode@gmail.com
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="border-t px-6 md:px-12 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs" style={{ borderTopColor: '#D2D2D7', color: '#AEAEB2' }}>
+          <span>© 2026 Nishanth Hospital, Erode. All rights reserved.</span>
+          <span>
+            Developed by{' '}
+            <a
+              href="https://www.datazync.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold transition-colors"
+              style={{ color: '#007AFF' }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#0066CC'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = '#007AFF'}
+            >
+              DataZync
+            </a>
+          </span>
+        </div>
       </footer>
 
-      {/* Interactivity modal popup for appointment scheduling and intake */}
       <BookingModal isOpen={isModalOpen} onClose={handleCloseModal} preselectedDoctor={selectedDoctor} />
-      
     </div>
   );
 }

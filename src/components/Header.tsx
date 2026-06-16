@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { 
-  Heart, Phone, Sparkles, Activity, Baby, MapPin, ChevronDown, 
-  Menu as MenuIcon, X, ClipboardList, Mail, Facebook, 
-  Instagram, Linkedin, Youtube 
+import {
+  Heart, Phone, Sparkles, Activity, Baby, MapPin, ChevronDown,
+  Menu as MenuIcon, X, ClipboardList, Mail, Facebook,
+  Instagram, Youtube
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -13,62 +13,19 @@ interface HeaderProps {
 }
 
 const MENU_ITEMS = [
-  { 
-    id: 'home', 
-    label: 'Home', 
-    desc: 'Sequence play walk & core doctors', 
-    icon: Heart, 
-    accent: 'text-rose-400 bg-rose-500/10' 
-  },
-  { 
-    id: 'doctors', 
-    label: 'Our Doctors', 
-    desc: 'Meet our core team of specialists', 
-    icon: Heart, 
-    accent: 'text-indigo-400 bg-indigo-500/10' 
-  },
-  { 
-    id: 'about', 
-    label: 'About Us', 
-    desc: '25 years of excellence & standards', 
-    icon: Sparkles, 
-    accent: 'text-amber-400 bg-amber-500/10' 
-  },
-  { 
-    id: 'why-choose', 
-    label: 'Why Choose Us', 
-    desc: '30,000+ safe deliveries & stats care', 
-    icon: Activity, 
-    accent: 'text-emerald-400 bg-emerald-500/10' 
-  },
-  { 
-    id: 'magizh', 
-    label: 'மகிழ் Care', 
-    desc: 'Hope for aspiring parent families', 
-    icon: Baby, 
-    accent: 'text-rose-400 bg-rose-500/10' 
-  },
-  { 
-    id: 'contact', 
-    label: 'Contact Us', 
-    desc: 'EM EVN road, phone hotlines & branch', 
-    icon: MapPin, 
-    accent: 'text-pink-400 bg-pink-500/10' 
-  },
-  { 
-    id: 'doctor', 
-    label: 'Doctor Portal', 
-    desc: 'Authorized clinical intake analytics', 
-    icon: ClipboardList, 
-    accent: 'text-sky-400 bg-sky-500/10' 
-  }
+  { id: 'home',       label: 'Home',          icon: Heart },
+  { id: 'doctors',   label: 'Our Doctors',   icon: Heart },
+  { id: 'about',     label: 'About Us',      icon: Sparkles },
+  { id: 'why-choose',label: 'Why Choose Us', icon: Activity },
+  { id: 'magizh',    label: 'மகிழ் Care',    icon: Baby },
+  { id: 'contact',   label: 'Contact',       icon: MapPin },
+  { id: 'doctor',    label: 'Doctor Portal', icon: ClipboardList },
 ] as const;
 
 export default function Header({ onContactClick, currentView, onViewChange }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -80,229 +37,257 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
   }, []);
 
   return (
-    <motion.header 
+    <motion.header
       id="main-nav-header"
-      initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="fixed top-0 left-0 right-0 z-50 flex flex-col w-full bg-white select-none border-b border-slate-250/70 shadow-sm"
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className="fixed top-0 left-0 right-0 z-50 select-none"
+      style={{
+        background: 'rgba(255,255,255,0.88)',
+        backdropFilter: 'saturate(180%) blur(20px)',
+        WebkitBackdropFilter: 'saturate(180%) blur(20px)',
+        borderBottom: '1px solid rgba(0,0,0,0.06)',
+      }}
     >
-      {/* LEVEL 1: TOP METADATA BAR (Hidden on mobile for responsive density) */}
-      <div className="hidden md:flex w-full h-10 border-b border-slate-100 items-center justify-between px-6 md:px-12 bg-white text-slate-500 text-xs font-sans">
-        <div className="flex items-center space-x-2 font-medium" id="topbar-welcome-message">
-          <span>Welcome to Nishanth Hospital</span>
-        </div>
+      {/* ── TOP INFO BAR ──────────────────────────────────────── */}
+      <div
+        className="hidden md:flex w-full h-9 items-center justify-between px-8 lg:px-14 text-xs"
+        style={{ borderBottom: '1px solid rgba(0,0,0,0.05)', color: '#6E6E73' }}
+      >
+        <span className="font-medium" style={{ color: '#6E6E73' }}>
+          Welcome to Nishanth Hospital — Erode's Premier Women &amp; Child Care Centre
+        </span>
 
-        <div className="flex items-center h-full space-x-6">
-          {/* Email segment */}
-          <div className="flex items-center space-x-2 border-r border-slate-200 pr-5 h-5" id="topbar-email-wrapper">
-            <Mail className="w-4.5 h-4.5 text-sky-500 shrink-0 fill-sky-50/10" />
-            <a 
-              href="mailto:Nishanthhospitalerode@gmail.com" 
-              className="hover:text-sky-600 font-medium transition-colors"
-            >
-              Nishanthhospitalerode@gmail.com
-            </a>
-          </div>
+        <div className="flex items-center h-full gap-6">
+          <a
+            href="mailto:Nishanthhospitalerode@gmail.com"
+            className="flex items-center gap-1.5 font-medium transition-colors"
+            style={{ color: '#6E6E73' }}
+            onMouseEnter={e => ((e.target as HTMLElement).closest('a')!).style.color = '#007AFF'}
+            onMouseLeave={e => ((e.target as HTMLElement).closest('a')!).style.color = '#6E6E73'}
+          >
+            <Mail className="w-3.5 h-3.5" />
+            <span>Nishanthhospitalerode@gmail.com</span>
+          </a>
 
-          {/* Location segment */}
-          <div className="flex items-center space-x-2" id="topbar-location-wrapper">
-            <MapPin className="w-4.5 h-4.5 text-sky-500 shrink-0" />
-            <span className="font-medium">Erode, Tamil Nadu, India.</span>
-          </div>
-
-          {/* Social Media Link Icons with light theme background segment */}
-          <div className="bg-[#f0f2fe] h-10 px-5 flex items-center space-x-4 border-l border-slate-100 hover:bg-[#e8ebfd] transition-colors" id="topbar-socials-block">
-            <a 
-              href="https://facebook.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-slate-500 hover:text-[#1877F2] transition-colors"
-              aria-label="Facebook"
-            >
-              <Facebook className="w-4 h-4" />
+          <div className="flex items-center gap-3" style={{ color: '#6E6E73' }}>
+            <a href="https://www.facebook.com/nishanthospital/" target="_blank" rel="noopener noreferrer"
+              className="hover:text-[#1877F2] transition-colors" aria-label="Facebook">
+              <Facebook className="w-3.5 h-3.5" />
             </a>
-            <a 
-              href="https://x.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-slate-500 hover:text-black transition-colors flex items-center justify-center"
-              aria-label="X Desktop"
-            >
-              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-              </svg>
+            <a href="https://www.instagram.com/dr.sruthi_herhealth" target="_blank" rel="noopener noreferrer"
+              className="hover:text-[#E1306C] transition-colors" aria-label="Instagram">
+              <Instagram className="w-3.5 h-3.5" />
             </a>
-            <a 
-              href="https://instagram.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-slate-500 hover:text-[#E1306C] transition-colors"
-              aria-label="Instagram"
-            >
-              <Instagram className="w-4 h-4" />
-            </a>
-            <a 
-              href="https://linkedin.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-slate-500 hover:text-[#0A66C2] transition-colors"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-4 h-4" />
-            </a>
-            <a 
-              href="https://youtube.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-slate-500 hover:text-[#FF0000] transition-colors"
-              aria-label="YouTube"
-            >
-              <Youtube className="w-4 h-4" />
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer"
+              className="hover:text-[#FF0000] transition-colors" aria-label="YouTube">
+              <Youtube className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>
       </div>
 
-      {/* LEVEL 2: MAIN NAVIGATION BAR */}
-      <div className="w-full h-18 md:h-20 flex items-center justify-between px-6 md:px-12 relative" id="main-nav-container">
-        
-        {/* Brand Logo - Clicking resets to Home */}
-        <div 
-          onClick={() => {
-            onViewChange('home');
-            setIsMenuOpen(false);
-          }}
-          className="flex items-center space-x-3 group cursor-pointer shrink-0" 
+      {/* ── MAIN NAV BAR ──────────────────────────────────────── */}
+      <div className="w-full h-16 flex items-center justify-between px-6 lg:px-14 gap-4" id="main-nav-container">
+
+        {/* Logo */}
+        <div
+          onClick={() => { onViewChange('home'); setIsMenuOpen(false); }}
+          className="flex items-center cursor-pointer shrink-0 group"
           id="logo-container"
         >
-          <img 
-            src="https://i.postimg.cc/d1Mjps1w/Nishanth-logo.avif" 
-            alt="Brand Logo" 
-            className="h-10 md:h-12 w-auto object-contain rounded-lg transition-transform duration-300 group-hover:scale-105"
+          <img
+            src="https://i.postimg.cc/d1Mjps1w/Nishanth-logo.avif"
+            alt="Nishanth Hospital"
+            className="h-10 w-auto object-contain rounded-lg transition-transform duration-300 group-hover:scale-[1.03]"
             referrerPolicy="no-referrer"
             id="brand-logo-image"
           />
         </div>
 
-        {/* Desktop Navbar menu links styled exactly like the screenshot */}
-        <div className="hidden lg:flex items-center space-x-8" id="desktop-menu-navigation">
-          {MENU_ITEMS.map((item) => {
-            const isSelected = item.id === currentView;
+        {/* Desktop Nav Links */}
+        <nav className="hidden lg:flex items-center gap-1" id="desktop-nav-links">
+          {MENU_ITEMS.filter(i => i.id !== 'doctor').map((item) => {
+            const isActive = item.id === currentView;
             return (
               <button
                 key={item.id}
                 onClick={() => onViewChange(item.id)}
-                className={`font-sans text-[15px] font-bold tracking-tight py-2 transition-all flex items-center gap-1 cursor-pointer select-none outline-none ${
-                  isSelected 
-                    ? 'text-rose-600 underline decoration-2 underline-offset-8' 
-                    : 'text-slate-800 hover:text-rose-500'
-                }`}
+                className="relative px-3.5 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-200 cursor-pointer outline-none"
+                style={{
+                  color: isActive ? '#DC2626' : '#1D1D1F',
+                  background: isActive ? 'rgba(220,38,38,0.06)' : 'transparent',
+                }}
+                onMouseEnter={e => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLButtonElement).style.color = '#DC2626';
+                    (e.currentTarget as HTMLButtonElement).style.background = 'rgba(220,38,38,0.05)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLButtonElement).style.color = '#1D1D1F';
+                    (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                  }
+                }}
                 id={`nav-link-${item.id}`}
               >
-                <span>{item.label}</span>
-                {(item.id === 'about' || item.id === 'doctor' || item.id === 'why-choose') && (
-                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-colors group-hover:text-rose-400`} />
+                {item.label}
+                {isActive && (
+                  <span
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full"
+                    style={{ background: '#DC2626' }}
+                  />
                 )}
               </button>
             );
           })}
-        </div>
+        </nav>
 
-        {/* Right side contact number widget styled perfectly from the screenshot */}
-        <div className="flex items-center space-x-4">
-          
-          <div 
+        {/* Right: Phone + CTA + Hamburger */}
+        <div className="flex items-center gap-3">
+
+          {/* Phone widget */}
+          <button
             onClick={onContactClick}
-            className="flex items-center space-x-3 group cursor-pointer"
-            id="header-reach-us-widget"
+            className="hidden md:flex items-center gap-2.5 group cursor-pointer"
+            id="header-phone-widget"
           >
-            {/* Round cyan/blue calling icon button */}
-            <div className="w-11 h-11 rounded-full bg-[#0a80ca] hover:bg-[#086da3] text-white flex items-center justify-center shadow-lg shadow-sky-500/10 transition-all duration-300 transform group-hover:scale-105 shrink-0" id="reach-us-icon-wrapper">
-              <Phone className="w-4.5 h-4.5 fill-white/10" />
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200"
+              style={{ background: 'rgba(220,38,38,0.08)' }}
+            >
+              <Phone className="w-4 h-4" style={{ color: '#DC2626' }} />
             </div>
-            
-            <div className="flex flex-col text-left leading-tight">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
-                Reach Us
-              </span>
-              <span className="text-[14px] md:text-[16px] font-black text-slate-900 font-sans tracking-tight group-hover:text-[#0a80ca] transition-colors mt-0.5 leading-none">
-                +91 98429 60060
-              </span>
+            <div className="hidden xl:flex flex-col text-left leading-tight">
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#AEAEB2' }}>Emergency</span>
+              <span className="text-[13px] font-bold tracking-tight" style={{ color: '#1D1D1F' }}>+91 98429 60060</span>
             </div>
-          </div>
+          </button>
 
-          {/* Interactive Responsive Hamburger Trigger */}
-          <div className="flex items-center lg:hidden" id="mobile-navigation-actions" ref={menuRef}>
+          {/* Book Appointment CTA */}
+          <button
+            onClick={onContactClick}
+            className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold text-white transition-all duration-200 cursor-pointer"
+            style={{ background: '#DC2626', boxShadow: '0 2px 10px rgba(220,38,38,0.25)' }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.background = '#B91C1C';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(220,38,38,0.35)';
+              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.background = '#DC2626';
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 2px 10px rgba(220,38,38,0.25)';
+              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
+            }}
+          >
+            <span>Book Appointment</span>
+          </button>
+
+          {/* Doctor Portal link (desktop, subtle) */}
+          <button
+            onClick={() => onViewChange('doctor')}
+            className="hidden xl:flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer"
+            style={{ color: '#6E6E73', background: 'rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.06)' }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.color = '#007AFF';
+              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,122,255,0.2)';
+              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,122,255,0.05)';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.color = '#6E6E73';
+              (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,0,0,0.06)';
+              (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.03)';
+            }}
+          >
+            <ClipboardList className="w-3.5 h-3.5" />
+            <span>Portal</span>
+          </button>
+
+          {/* Mobile hamburger */}
+          <div className="flex items-center lg:hidden" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 ml-1 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100 transition-all cursor-pointer outline-none"
+              className="p-2 rounded-xl transition-all cursor-pointer outline-none"
+              style={{
+                background: isMenuOpen ? 'rgba(220,38,38,0.08)' : 'rgba(0,0,0,0.04)',
+                border: '1px solid rgba(0,0,0,0.08)',
+              }}
               id="mobile-menu-trigger"
+              aria-label="Toggle menu"
             >
-              {isMenuOpen ? (
-                <X className="w-5 h-5 text-rose-500" />
-              ) : (
-                <MenuIcon className="w-5 h-5 text-slate-700" />
-              )}
+              <AnimatePresence mode="wait">
+                {isMenuOpen ? (
+                  <motion.span key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                    <X className="w-4.5 h-4.5" style={{ color: '#DC2626' }} />
+                  </motion.span>
+                ) : (
+                  <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+                    <MenuIcon className="w-4.5 h-4.5" style={{ color: '#1D1D1F' }} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </div>
-
       </div>
 
-      {/* MOBILE EXPANDABLE DRAWER/MENU */}
+      {/* ── MOBILE DROPDOWN MENU ──────────────────────────────── */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="lg:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-2xl overflow-hidden z-40 flex flex-col px-6 py-4 space-y-3"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="lg:hidden absolute top-full left-0 right-0 overflow-hidden shadow-2xl"
+            style={{
+              background: 'rgba(255,255,255,0.97)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              borderBottom: '1px solid rgba(0,0,0,0.08)',
+            }}
             id="mobile-dropdown-panel"
           >
-            {MENU_ITEMS.map((item) => {
-              const isSelected = item.id === currentView;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    onViewChange(item.id);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`w-full text-left py-2.5 px-4 rounded-xl font-sans font-bold text-sm tracking-wide transition-all flex items-center justify-between cursor-pointer outline-none ${
-                    isSelected 
-                      ? 'bg-rose-50 text-rose-600' 
-                      : 'text-slate-700 hover:bg-slate-50 hover:text-rose-500'
-                  }`}
-                  id={`mobile-nav-link-${item.id}`}
-                >
-                  <span>{item.label}</span>
-                  {isSelected ? (
-                    <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                  ) : (
-                    (item.id === 'about' || item.id === 'doctor' || item.id === 'why-choose') && (
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                    )
-                  )}
-                </button>
-              );
-            })}
-            
-            {/* Quick contact and mail badges inside mobile drawer */}
-            <div className="pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-500 font-sans" id="mobile-drawer-footer">
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-sky-500" />
-                <a href="mailto:Nishanthhospitalerode@gmail.com" className="hover:text-rose-500 transition-colors">
-                  Nishanthhospitalerode@gmail.com
-                </a>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-sky-500" />
-                <a href="tel:+919842960060" className="hover:text-rose-500 transition-colors font-medium">
-                  +91 98429 60060
-                </a>
-              </div>
+            <div className="px-5 py-4 space-y-1">
+              {MENU_ITEMS.map((item) => {
+                const isActive = item.id === currentView;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => { onViewChange(item.id); setIsMenuOpen(false); }}
+                    className="w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center justify-between cursor-pointer outline-none"
+                    style={{
+                      background: isActive ? 'rgba(220,38,38,0.06)' : 'transparent',
+                      color: isActive ? '#DC2626' : '#1D1D1F',
+                    }}
+                    id={`mobile-nav-link-${item.id}`}
+                  >
+                    <span>{item.label}</span>
+                    {isActive && <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#DC2626' }} />}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Contact strip */}
+            <div className="px-5 py-4 space-y-2.5" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+              <a href="tel:+919842960060" className="flex items-center gap-3 text-sm font-semibold" style={{ color: '#DC2626' }}>
+                <Phone className="w-4 h-4" />
+                <span>+91 98429 60060</span>
+              </a>
+              <a href="mailto:Nishanthhospitalerode@gmail.com" className="flex items-center gap-3 text-xs" style={{ color: '#6E6E73' }}>
+                <Mail className="w-4 h-4" />
+                <span>Nishanthhospitalerode@gmail.com</span>
+              </a>
+              <button
+                onClick={() => { onContactClick(); setIsMenuOpen(false); }}
+                className="w-full mt-2 py-3 rounded-xl text-sm font-semibold text-white cursor-pointer transition-all"
+                style={{ background: '#DC2626' }}
+              >
+                Book Appointment
+              </button>
             </div>
           </motion.div>
         )}

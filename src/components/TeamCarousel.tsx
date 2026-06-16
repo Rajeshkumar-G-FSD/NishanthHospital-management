@@ -5,7 +5,6 @@ import { gsap } from 'gsap';
 import { SplitText as GSAPSplitText } from 'gsap/SplitText';
 import { useGSAP } from '@gsap/react';
 
-// Custom lightweight cn implementation for styling merges
 const cn = (...classes: (string | undefined | null | boolean)[]) => {
   return classes.filter(Boolean).join(' ');
 };
@@ -20,38 +19,22 @@ function AnimatedBio({ text }: AnimatedBioProps) {
   useGSAP(() => {
     if (!containerRef.current) return;
 
-    // Reset components & build high fashion custom character wrapper
     const split = new GSAPSplitText(containerRef.current, {
       type: 'words,chars',
       charsClass: 'inline-block opacity-0'
     });
 
-    // Animate letters using a beautiful staggered fade-slide transition
     gsap.fromTo(
       split.chars,
-      {
-        opacity: 0,
-        y: 6,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        stagger: 0.007,
-        ease: 'power3.out',
-      }
+      { opacity: 0, y: 5 },
+      { opacity: 1, y: 0, duration: 0.35, stagger: 0.006, ease: 'power3.out' }
     );
 
-    return () => {
-      split.revert();
-    };
+    return () => { split.revert(); };
   }, [text]);
 
   return (
-    <p
-      ref={containerRef}
-      className="text-slate-300 text-xs sm:text-sm leading-relaxed font-sans font-medium"
-    >
+    <p ref={containerRef} className="text-sm leading-relaxed" style={{ color: '#6E6E73' }}>
       {text}
     </p>
   );
@@ -63,43 +46,21 @@ function AnimatedTitle({ text, className }: { text: string; className?: string }
   useGSAP(() => {
     if (!containerRef.current) return;
 
-    // Reset components & build custom characters/words split wrapper
     const split = new GSAPSplitText(containerRef.current, {
       type: 'words,chars',
       charsClass: 'inline-block opacity-0'
     });
 
-    // Animate letters using a beautiful staggered lift, rotate and fade-in transition
     gsap.fromTo(
       split.chars,
-      {
-        opacity: 0,
-        y: 18,
-        rotateX: -15,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 0.6,
-        stagger: 0.012,
-        ease: 'power3.out',
-      }
+      { opacity: 0, y: 16, rotateX: -12 },
+      { opacity: 1, y: 0, rotateX: 0, duration: 0.55, stagger: 0.01, ease: 'power3.out' }
     );
 
-    return () => {
-      split.revert();
-    };
+    return () => { split.revert(); };
   }, [text]);
 
-  return (
-    <h2
-      ref={containerRef}
-      className={className}
-    >
-      {text}
-    </h2>
-  );
+  return <h2 ref={containerRef} className={className}>{text}</h2>;
 }
 
 export interface TeamMember {
@@ -111,63 +72,34 @@ export interface TeamMember {
 }
 
 export interface TeamCarouselProps {
-  /** Array of team members */
   members: TeamMember[];
-  /** Title displayed above the carousel */
   title?: string;
-  /** Title font size */
   titleSize?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  /** Title color */
   titleColor?: string;
-  /** Background color or gradient. Overrides the default 'bg-background' class. */
   background?: string;
-  /** Card width in pixels */
   cardWidth?: number;
-  /** Card height in pixels */
   cardHeight?: number;
-  /** Card border radius */
   cardRadius?: number;
-  /** Enable/disable navigation arrows */
   showArrows?: boolean;
-  /** Enable/disable dots indicator */
   showDots?: boolean;
-  /** Enable/disable keyboard navigation */
   keyboardNavigation?: boolean;
-  /** Enable/disable touch/swipe navigation */
   touchNavigation?: boolean;
-  /** Animation duration in milliseconds */
   animationDuration?: number;
-  /** Auto-play interval in milliseconds (0 to disable) */
   autoPlay?: number;
-  /** Pause auto-play on hover */
   pauseOnHover?: boolean;
-  /** Number of visible cards on each side */
   visibleCards?: number;
-  /** Scale factor for side cards */
   sideCardScale?: number;
-  /** Opacity for side cards */
   sideCardOpacity?: number;
-  /** Apply grayscale filter to side cards */
   grayscaleEffect?: boolean;
-  /** Custom className for container */
   className?: string;
-  /** Custom className for cards */
   cardClassName?: string;
-  /** Custom className for title */
   titleClassName?: string;
-  /** Member info position */
   infoPosition?: 'bottom' | 'overlay' | 'none';
-  /** Info text color */
   infoTextColor?: string;
-  /** Info background */
   infoBackground?: string;
-  /** Callback when active member changes */
   onMemberChange?: (member: TeamMember, index: number) => void;
-  /** Callback when card is clicked */
   onCardClick?: (member: TeamMember, index: number) => void;
-  /** Trigger callback when booking direct consult is requested */
   onBookClick?: (doctorName: string) => void;
-  /** Initial active index */
   initialIndex?: number;
 }
 
@@ -175,7 +107,7 @@ export const TeamCarousel: React.FC<TeamCarouselProps> = ({
   members,
   title = "OUR TEAM",
   titleSize = "2xl",
-  titleColor = "rgba(244, 63, 94, 1)", // Updated text color to match the rose theme beautifully
+  titleColor,
   background,
   cardWidth = 280,
   cardHeight = 380,
@@ -189,21 +121,21 @@ export const TeamCarousel: React.FC<TeamCarouselProps> = ({
   pauseOnHover = true,
   visibleCards = 2,
   sideCardScale = 0.9,
-  sideCardOpacity = 0.8,
+  sideCardOpacity = 0.7,
   grayscaleEffect = true,
   className,
   cardClassName,
   titleClassName,
   infoPosition = "bottom",
-  infoTextColor = "rgb(243, 244, 246)", // Better contrast text in dark layout
-  infoBackground = "transparent",
+  infoTextColor,
+  infoBackground,
   onMemberChange,
   onCardClick,
   onBookClick,
   initialIndex = 0,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [direction, setDirection] = useState(0); // 0: no movement, 1: next, -1: prev
+  const [direction, setDirection] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
@@ -220,21 +152,16 @@ export const TeamCarousel: React.FC<TeamCarouselProps> = ({
     [currentIndex, totalMembers, members, onMemberChange]
   );
 
-  const wrapIndex = (index: number) => {
-    return (index + totalMembers) % totalMembers;
-  };
+  const wrapIndex = (index: number) => (index + totalMembers) % totalMembers;
 
   const calculatePosition = (index: number) => {
-    const activeIndex = currentIndex;
-    const diff = wrapIndex(index - activeIndex);
-
+    const diff = wrapIndex(index - currentIndex);
     if (diff === 0) return 'center';
     if (diff <= visibleCards) return `right-${diff}`;
     if (diff >= totalMembers - visibleCards) return `left-${totalMembers - diff}`;
     return 'hidden';
   };
 
-  // Explicitly typing without explicit generic to be fully compatible with compiled framer-motion configs
   const getVariantStyles = (position: string): any => {
     const transition = {
       duration: animationDuration / 1000,
@@ -243,226 +170,138 @@ export const TeamCarousel: React.FC<TeamCarouselProps> = ({
 
     switch (position) {
       case 'center':
-        return {
-          zIndex: 10,
-          opacity: 1,
-          scale: 1.1,
-          x: 0,
-          filter: 'grayscale(0%)',
-          pointerEvents: 'auto' as const,
-          transition,
-        };
+        return { zIndex: 10, opacity: 1, scale: 1.08, x: 0, filter: 'grayscale(0%)', pointerEvents: 'auto' as const, transition };
       case 'right-1':
-        return {
-          zIndex: 5,
-          opacity: sideCardOpacity,
-          scale: sideCardScale,
-          x: cardWidth * 0.7,
-          filter: grayscaleEffect ? 'grayscale(100%)' : 'grayscale(0%)',
-          pointerEvents: 'auto' as const,
-          transition,
-        };
+        return { zIndex: 5, opacity: sideCardOpacity, scale: sideCardScale, x: cardWidth * 0.7, filter: grayscaleEffect ? 'grayscale(80%)' : 'grayscale(0%)', pointerEvents: 'auto' as const, transition };
       case 'right-2':
-        return {
-          zIndex: 1,
-          opacity: sideCardOpacity * 0.7,
-          scale: sideCardScale * 0.9,
-          x: cardWidth * 1.4,
-          filter: grayscaleEffect ? 'grayscale(100%)' : 'grayscale(0%)',
-          pointerEvents: 'auto' as const,
-          transition,
-        };
+        return { zIndex: 1, opacity: sideCardOpacity * 0.6, scale: sideCardScale * 0.9, x: cardWidth * 1.4, filter: grayscaleEffect ? 'grayscale(100%)' : 'grayscale(0%)', pointerEvents: 'auto' as const, transition };
       case 'left-1':
-        return {
-          zIndex: 5,
-          opacity: sideCardOpacity,
-          scale: sideCardScale,
-          x: -cardWidth * 0.7,
-          filter: grayscaleEffect ? 'grayscale(100%)' : 'grayscale(0%)',
-          pointerEvents: 'auto' as const,
-          transition,
-        };
+        return { zIndex: 5, opacity: sideCardOpacity, scale: sideCardScale, x: -cardWidth * 0.7, filter: grayscaleEffect ? 'grayscale(80%)' : 'grayscale(0%)', pointerEvents: 'auto' as const, transition };
       case 'left-2':
-        return {
-          zIndex: 1,
-          opacity: sideCardOpacity * 0.7,
-          scale: sideCardScale * 0.9,
-          x: -cardWidth * 1.4,
-          filter: grayscaleEffect ? 'grayscale(100%)' : 'grayscale(0%)',
-          pointerEvents: 'auto' as const,
-          transition,
-        };
+        return { zIndex: 1, opacity: sideCardOpacity * 0.6, scale: sideCardScale * 0.9, x: -cardWidth * 1.4, filter: grayscaleEffect ? 'grayscale(100%)' : 'grayscale(0%)', pointerEvents: 'auto' as const, transition };
       default:
-        return {
-          zIndex: 0,
-          opacity: 0,
-          scale: 0.8,
-          x: direction > 0 ? cardWidth * (visibleCards + 1) : -cardWidth * (visibleCards + 1),
-          pointerEvents: 'none' as const,
-          filter: grayscaleEffect ? 'grayscale(100%)' : 'grayscale(0%)',
-          transition,
-        };
+        return { zIndex: 0, opacity: 0, scale: 0.8, x: direction > 0 ? cardWidth * (visibleCards + 1) : -cardWidth * (visibleCards + 1), pointerEvents: 'none' as const, filter: 'grayscale(100%)', transition };
     }
   };
 
-  // Auto-play functionality
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (autoPlay > 0) {
-      interval = setInterval(() => {
-        paginate(1);
-      }, autoPlay);
-    }
+    if (autoPlay > 0) interval = setInterval(() => paginate(1), autoPlay);
 
-    const carouselContainer = document.getElementById('team-carousel-container');
+    const el = document.getElementById('team-carousel-container');
+    const handleEnter = () => { if (pauseOnHover && autoPlay > 0) clearInterval(interval); };
+    const handleLeave = () => { if (pauseOnHover && autoPlay > 0) interval = setInterval(() => paginate(1), autoPlay); };
 
-    const handleMouseEnter = () => {
-      if (pauseOnHover && autoPlay > 0) clearInterval(interval);
-    };
-
-    const handleMouseLeave = () => {
-      if (pauseOnHover && autoPlay > 0) {
-        interval = setInterval(() => {
-          paginate(1);
-        }, autoPlay);
-      }
-    };
-
-    if (carouselContainer && pauseOnHover && autoPlay > 0) {
-      carouselContainer.addEventListener('mouseenter', handleMouseEnter);
-      carouselContainer.addEventListener('mouseleave', handleMouseLeave);
+    if (el && pauseOnHover && autoPlay > 0) {
+      el.addEventListener('mouseenter', handleEnter);
+      el.addEventListener('mouseleave', handleLeave);
     }
 
     return () => {
       clearInterval(interval);
-      if (carouselContainer && pauseOnHover && autoPlay > 0) {
-        carouselContainer.removeEventListener('mouseenter', handleMouseEnter);
-        carouselContainer.removeEventListener('mouseleave', handleMouseLeave);
+      if (el && pauseOnHover && autoPlay > 0) {
+        el.removeEventListener('mouseenter', handleEnter);
+        el.removeEventListener('mouseleave', handleLeave);
       }
     };
   }, [autoPlay, paginate, pauseOnHover]);
 
-  // Keyboard navigation
   useEffect(() => {
     if (!keyboardNavigation) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') {
-        paginate(-1);
-      } else if (e.key === 'ArrowRight') {
-        paginate(1);
-      }
+      if (e.key === 'ArrowLeft') paginate(-1);
+      else if (e.key === 'ArrowRight') paginate(1);
     };
-
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [keyboardNavigation, paginate]);
 
-  // Touch navigation
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!touchNavigation) return;
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchNavigation) return;
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
+  const handleTouchStart = (e: React.TouchEvent) => { if (touchNavigation) setTouchStart(e.targetTouches[0].clientX); };
+  const handleTouchMove = (e: React.TouchEvent) => { if (touchNavigation) setTouchEnd(e.targetTouches[0].clientX); };
   const handleTouchEnd = () => {
     if (!touchNavigation) return;
-
-    const swipeThreshold = 50;
     const diff = touchStart - touchEnd;
-
-    if (Math.abs(diff) > swipeThreshold) {
-      if (diff > 0) {
-        paginate(1);
-      } else {
-        paginate(-1);
-      }
-    }
-  };
-
-  const titleSizeClasses = {
-    sm: 'text-3xl sm:text-4xl',
-    md: 'text-4xl sm:text-5xl',
-    lg: 'text-5xl sm:text-6xl',
-    xl: 'text-6xl sm:text-7xl',
-    '2xl': 'text-7xl sm:text-8xl',
+    if (Math.abs(diff) > 50) paginate(diff > 0 ? 1 : -1);
   };
 
   return (
     <div
       id="team-carousel-container"
-      className={cn(`w-full py-24 flex flex-col items-center justify-center overflow-hidden relative bg-slate-950 border-t border-white/5`, className)}
-      style={{ background: background }}
+      className={cn(`w-full py-20 flex flex-col items-center justify-center overflow-hidden relative`, className)}
+      style={{ background: background || '#F5F5F7', borderTop: '1px solid #E5E5EA' }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+
       {/* Title */}
       {title && (
-        <div className="w-full text-center px-6 mb-12 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="w-full text-center px-6 mb-10 relative z-10"
+        >
           <AnimatedTitle
             text={title}
             className={cn(
-              "font-serif font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-rose-100 to-amber-200 inline-block relative",
+              "font-bold tracking-tight inline-block",
               "text-3xl sm:text-4xl md:text-5xl",
               titleClassName
             )}
+            style={{ color: titleColor || '#1D1D1F' } as React.CSSProperties}
           />
-          <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400 rounded-full" />
-        </div>
+          <div
+            className="mx-auto mt-3 h-0.5 w-16 rounded-full"
+            style={{ background: 'linear-gradient(to right, #DC2626, #F59E0B)' }}
+          />
+        </motion.div>
       )}
 
-      {/* Carousel Container */}
+      {/* Carousel track */}
       <div
-        className="w-full max-w-6xl relative mt-6"
-        style={{
-          height: cardHeight + 100,
-          perspective: '1000px',
-        }}
+        className="w-full max-w-6xl relative mt-4"
+        style={{ height: cardHeight + 100, perspective: '1000px' }}
       >
-        {/* Navigation Arrows */}
+        {/* Arrows */}
         {showArrows && (
           <>
             <motion.button
               onClick={() => paginate(-1)}
-              className="absolute left-5 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900/90 hover:text-rose-400 border border-white/10 text-white w-10 h-10 rounded-full flex items-center justify-center z-25 transition-all duration-300 hover:scale-110 cursor-pointer"
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.92 }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-25 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200"
+              style={{ background: '#FFFFFF', border: '1px solid #E5E5EA', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', color: '#6E6E73' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#DC2626'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(220,38,38,0.2)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = '#6E6E73'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#E5E5EA'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-5 h-5" />
             </motion.button>
             <motion.button
               onClick={() => paginate(1)}
-              className="absolute right-5 top-1/2 -translate-y-1/2 bg-slate-900/60 hover:bg-slate-900/90 hover:text-rose-400 border border-white/10 text-white w-10 h-10 rounded-full flex items-center justify-center z-25 transition-all duration-300 hover:scale-110 cursor-pointer"
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.92 }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-25 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200"
+              style={{ background: '#FFFFFF', border: '1px solid #E5E5EA', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', color: '#6E6E73' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#DC2626'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(220,38,38,0.2)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = '#6E6E73'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#E5E5EA'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-5 h-5" />
             </motion.button>
           </>
         )}
 
-        {/* Cards Track */}
-        <div
-          className="w-full h-full flex justify-center items-center relative"
-          style={{ transformStyle: 'preserve-3d' }}
-        >
+        {/* Cards */}
+        <div className="w-full h-full flex justify-center items-center relative" style={{ transformStyle: 'preserve-3d' }}>
           <AnimatePresence initial={false} custom={direction}>
             {members.map((member, index) => {
               const position = calculatePosition(index);
               const isCurrent = index === currentIndex;
-
               if (position === 'hidden' && !isCurrent) return null;
 
               return (
                 <motion.div
                   key={member.id}
-                  className={cn(
-                    "absolute overflow-hidden shadow-2xl cursor-pointer border border-white/10 bg-slate-900",
-                    cardClassName
-                  )}
+                  className={cn("absolute overflow-hidden cursor-pointer shadow-xl", cardClassName)}
                   style={{
                     width: cardWidth,
                     height: cardHeight,
@@ -471,6 +310,9 @@ export const TeamCarousel: React.FC<TeamCarouselProps> = ({
                     left: '50%',
                     marginLeft: -cardWidth / 2,
                     marginTop: -cardHeight / 2,
+                    background: '#FFFFFF',
+                    border: isCurrent ? '2px solid rgba(220,38,38,0.2)' : '1px solid #E5E5EA',
+                    boxShadow: isCurrent ? '0 8px 40px rgba(0,0,0,0.12)' : '0 2px 12px rgba(0,0,0,0.06)',
                   }}
                   initial={getVariantStyles('hidden')}
                   animate={getVariantStyles(position)}
@@ -492,17 +334,13 @@ export const TeamCarousel: React.FC<TeamCarouselProps> = ({
                     referrerPolicy="no-referrer"
                   />
 
-                  {/* Overlay Info */}
                   {infoPosition === 'overlay' && (
                     <div
                       className="absolute bottom-0 left-0 right-0 p-4 text-center"
-                      style={{
-                        background: infoBackground || "linear-gradient(transparent, rgba(15,23,42,0.95))",
-                        color: infoTextColor,
-                      }}
+                      style={{ background: infoBackground || 'linear-gradient(transparent, rgba(0,0,0,0.85))', color: infoTextColor || '#FFFFFF' }}
                     >
                       <h3 className="text-lg font-bold text-white">{member.name}</h3>
-                      <p className="text-sm text-slate-300 font-medium">{member.role}</p>
+                      <p className="text-sm" style={{ color: 'rgba(255,255,255,0.75)' }}>{member.role}</p>
                     </div>
                   )}
                 </motion.div>
@@ -512,107 +350,120 @@ export const TeamCarousel: React.FC<TeamCarouselProps> = ({
         </div>
       </div>
 
-      {/* Member Info (Bottom Redesigned with Elite Card Representation) */}
+      {/* Doctor info panel */}
       {infoPosition === 'bottom' && members[currentIndex] && (
         <motion.div
-          key={members[currentIndex].id + "-info"}
-          initial={{ opacity: 0, y: 30 }}
+          key={members[currentIndex].id + '-info'}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -25 }}
-          transition={{ type: "spring", stiffness: 100, damping: 20 }}
-          className="w-full max-w-2xl px-6 mt-12 z-20"
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ type: 'spring', stiffness: 90, damping: 20 }}
+          className="w-full max-w-2xl px-5 mt-10 z-20"
           id="active-doctor-profile-panel"
         >
-          <div className="bg-slate-900/60 backdrop-blur-3xl border border-white/10 rounded-3xl p-6 sm:p-8 relative shadow-2xl overflow-hidden group">
-            
-            {/* Ambient visual background glow matching the status */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full filter blur-2xl pointer-events-none transition-all duration-700 group-hover:bg-rose-500/15" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/5 rounded-full filter blur-2xl pointer-events-none transition-all duration-700" />
+          <div
+            className="rounded-3xl p-6 sm:p-8 relative overflow-hidden"
+            style={{ background: '#FFFFFF', border: '1px solid #E5E5EA', boxShadow: '0 4px 24px rgba(0,0,0,0.07)' }}
+          >
+            {/* Subtle top accent */}
+            <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-3xl" style={{ background: 'linear-gradient(to right, #DC2626, #F59E0B, #16A34A)' }} />
 
-            {/* Top Badge Indicators Row */}
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-sans font-black uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                <Shield className="w-3 h-3 fill-rose-400/10" />
-                Senior Specialist Consultant
+            {/* Badges */}
+            <div className="flex flex-wrap items-center gap-2 mb-5">
+              <span
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
+                style={{ background: 'rgba(220,38,38,0.07)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.15)' }}
+              >
+                <Shield className="w-3 h-3" />
+                Senior Specialist
               </span>
 
               {members[currentIndex].bio?.toLowerCase().includes('gold medalist') && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-sans font-black uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  <Award className="w-3 h-3 text-amber-500" />
+                <span
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
+                  style={{ background: 'rgba(245,158,11,0.08)', color: '#D97706', border: '1px solid rgba(245,158,11,0.18)' }}
+                >
+                  <Award className="w-3 h-3" />
                   Gold Medalist
                 </span>
               )}
 
               {members[currentIndex].bio?.toLowerCase().includes('madras medical college') && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-sans font-black uppercase tracking-wider bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                  <Star className="w-3 h-3 fill-indigo-400/15" />
+                <span
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"
+                  style={{ background: 'rgba(99,102,241,0.07)', color: '#6366F1', border: '1px solid rgba(99,102,241,0.15)' }}
+                >
+                  <Star className="w-3 h-3" />
                   MMC Alumnus
                 </span>
               )}
             </div>
 
-            {/* Doctor Identity Blocks */}
-            <div className="space-y-2 text-center sm:text-left">
-              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center justify-center sm:justify-start gap-2.5">
+            {/* Name & role */}
+            <div className="space-y-1.5 text-center sm:text-left mb-5">
+              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: '#1D1D1F' }}>
                 {members[currentIndex].name}
               </h3>
-              <p className="font-sans font-semibold text-sm sm:text-base text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-200 to-rose-400 uppercase tracking-wider">
+              <p className="text-sm sm:text-base font-semibold uppercase tracking-wide" style={{
+                background: 'linear-gradient(135deg, #DC2626, #F59E0B)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>
                 {members[currentIndex].role}
               </p>
             </div>
 
-            {/* Biography body with elite GSAP SplitText character animations */}
-            <div className="mt-5 border-t border-white/5 pt-5 text-center sm:text-left min-h-[72px]">
-              {members[currentIndex].bio && (
-                <AnimatedBio text={members[currentIndex].bio!} />
-              )}
+            {/* Bio */}
+            <div className="pt-4 min-h-[64px] text-center sm:text-left" style={{ borderTop: '1px solid #F2F2F2' }}>
+              {members[currentIndex].bio && <AnimatedBio text={members[currentIndex].bio!} />}
             </div>
 
-            {/* Quick Action consult layout button */}
+            {/* Book button */}
             {onBookClick && (
-              <div className="mt-6 pt-5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span className="text-[10px] text-slate-500 font-sans font-semibold uppercase tracking-wider">
-                  24x7 Emergency Obstetric Care Available
+              <div className="mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderTop: '1px solid #F2F2F2' }}>
+                <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#AEAEB2' }}>
+                  24×7 Emergency Obstetric Care
                 </span>
-                
                 <motion.button
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onBookClick(members[currentIndex].name)}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[11px] sm:text-xs font-sans font-black tracking-widest uppercase shadow-xl hover:opacity-95 cursor-pointer flex items-center justify-center gap-2 group-hover:shadow-rose-500/10 transition-all"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider text-white cursor-pointer transition-all"
+                  style={{ background: '#DC2626', boxShadow: '0 2px 10px rgba(220,38,38,0.2)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#B91C1C'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(220,38,38,0.3)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#DC2626'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 2px 10px rgba(220,38,38,0.2)'; }}
                   id={`consult-panel-book-${members[currentIndex].id}`}
                 >
                   <CalendarRange className="w-3.5 h-3.5" />
-                  <span>Book Consult with {members[currentIndex].name.split(' ')[1] || 'Doctor'}</span>
+                  Book with {members[currentIndex].name.split(' ')[1] || 'Doctor'}
                 </motion.button>
               </div>
             )}
-
           </div>
         </motion.div>
       )}
 
-      {/* Dots Indicator */}
+      {/* Dots */}
       {showDots && (
-        <div className="flex justify-center gap-3 mt-15">
+        <div className="flex justify-center gap-2.5 mt-8">
           {members.map((_, index) => (
             <motion.button
               key={index}
               onClick={() => {
                 if (index !== currentIndex) {
-                  const newDirection = index > currentIndex ? 1 : -1;
-                  setDirection(newDirection);
+                  setDirection(index > currentIndex ? 1 : -1);
                   setCurrentIndex(index);
                   onMemberChange?.(members[index], index);
                 }
               }}
-              className={cn(
-                "w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer",
-                index === currentIndex
-                  ? "scale-125 bg-rose-500"
-                  : "bg-white/20 hover:bg-white/40"
-              )}
               whileTap={{ scale: 0.9 }}
+              className="rounded-full cursor-pointer transition-all duration-300"
+              style={{
+                width: index === currentIndex ? '24px' : '8px',
+                height: '8px',
+                background: index === currentIndex ? '#DC2626' : '#D2D2D7',
+              }}
             />
           ))}
         </div>

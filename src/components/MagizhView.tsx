@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, Heart, Baby, ShieldAlert, HeartPulse, ShieldCheck, Microscope, UserCheck, Star } from 'lucide-react';
+import { Sparkles, Heart, Baby, ShieldAlert, HeartPulse, ShieldCheck, Microscope, UserCheck, Star, ArrowRight } from 'lucide-react';
 
 interface MagizhViewProps {
   onOpenBooking: () => void;
@@ -8,199 +8,262 @@ interface MagizhViewProps {
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    }
-  }
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { type: 'spring', stiffness: 95, damping: 14 }
-  }
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 80, damping: 16 } }
 };
 
-export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
-  // Services & specialties maps directly to the user's uploaded logo guidelines
-  const specialties = [
-    {
-      id: 'spec-maternity',
-      title: 'Maternity Care',
-      desc: 'Nurturing mother and baby through personalized labor suites and comprehensive childbirth methodologies.',
-      icon: Heart,
-      iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20'
-    },
-    {
-      id: 'spec-fetal',
-      title: 'Fetal Medicine & Scanning',
-      desc: 'Expert level scans, high resolution prenatal screening, and fetal medicine guidance.',
-      icon: ShieldCheck,
-      iconBg: 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-    },
-    {
-      id: 'spec-pediatric',
-      title: 'Pediatric Care',
-      desc: 'In-house level IV NICU, routine immunization schedules, and developmental milestones tracker.',
-      icon: Baby,
-      iconBg: 'bg-amber-500/10 text-amber-300 border-amber-500/20'
-    },
-    {
-      id: 'spec-gynecology',
-      title: "Gynecology & Women's Health",
-      desc: "Comprehensive outpatient consultations, standard diagnostic scans, and reproductive health wellness cycles.",
-      icon: HeartPulse,
-      iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-    },
-    {
-      id: 'spec-adolescent',
-      title: 'Adolescent Health & Cervical Cancer Screening',
-      desc: 'Compassionate young women wellness counselling alongside comprehensive HPV immunization programs.',
-      icon: ShieldAlert,
-      iconBg: 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-    },
-    {
-      id: 'spec-female-infertility',
-      title: 'Female Infertility Clinic',
-      desc: 'Targeted endocrinology profiling, ovulation monitoring programs, and modern therapeutic options.',
-      icon: Microscope,
-      iconBg: 'bg-pink-500/10 text-pink-400 border-pink-500/20'
-    },
-    {
-      id: 'spec-andrology',
-      title: 'Male Andrology Clinic',
-      desc: 'Advanced computer-aided diagnostic analysis, lifestyle guidance, and personalized medical pathways.',
-      icon: UserCheck,
-      iconBg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
-    }
-  ];
+const SPECIALTIES = [
+  {
+    id: 'spec-maternity',
+    title: 'Maternity Care',
+    desc: 'Nurturing mother and baby through personalised labour suites and comprehensive childbirth methodologies.',
+    icon: Heart,
+    color: '#DC2626',
+    bg: 'rgba(220,38,38,0.07)',
+    border: 'rgba(220,38,38,0.14)',
+  },
+  {
+    id: 'spec-fetal',
+    title: 'Fetal Medicine & Scanning',
+    desc: 'Expert level scans, high-resolution prenatal screening, and specialist fetal medicine guidance.',
+    icon: ShieldCheck,
+    color: '#007AFF',
+    bg: 'rgba(0,122,255,0.07)',
+    border: 'rgba(0,122,255,0.14)',
+  },
+  {
+    id: 'spec-pediatric',
+    title: 'Pediatric Care',
+    desc: 'In-house Level IV NICU, routine immunisation schedules, and developmental milestone tracking.',
+    icon: Baby,
+    color: '#F59E0B',
+    bg: 'rgba(245,158,11,0.07)',
+    border: 'rgba(245,158,11,0.14)',
+  },
+  {
+    id: 'spec-gynecology',
+    title: "Gynecology & Women's Health",
+    desc: 'Comprehensive outpatient consultations, diagnostic scans, and reproductive health wellness cycles.',
+    icon: HeartPulse,
+    color: '#16A34A',
+    bg: 'rgba(22,163,74,0.07)',
+    border: 'rgba(22,163,74,0.14)',
+  },
+  {
+    id: 'spec-adolescent',
+    title: 'Adolescent Health & Cervical Screening',
+    desc: "Compassionate young women's wellness counselling alongside comprehensive HPV immunisation programs.",
+    icon: ShieldAlert,
+    color: '#7C3AED',
+    bg: 'rgba(124,58,237,0.07)',
+    border: 'rgba(124,58,237,0.14)',
+  },
+  {
+    id: 'spec-female-infertility',
+    title: 'Female Infertility Clinic',
+    desc: 'Targeted endocrinology profiling, ovulation monitoring programs, and modern therapeutic options.',
+    icon: Microscope,
+    color: '#DB2777',
+    bg: 'rgba(219,39,119,0.07)',
+    border: 'rgba(219,39,119,0.14)',
+  },
+  {
+    id: 'spec-andrology',
+    title: 'Male Andrology Clinic',
+    desc: 'Advanced computer-aided diagnostic analysis, lifestyle guidance, and personalised medical pathways.',
+    icon: UserCheck,
+    color: '#0891B2',
+    bg: 'rgba(8,145,178,0.07)',
+    border: 'rgba(8,145,178,0.14)',
+  },
+];
 
+export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      exit={{ opacity: 0, y: -20 }}
-      className="w-full min-h-[85vh] bg-slate-950 text-slate-100 pt-28 pb-16 px-4 md:px-8 max-w-7xl mx-auto flex flex-col justify-center relative"
+      exit={{ opacity: 0, y: -16 }}
+      className="w-full min-h-screen pt-32 pb-20 px-5 md:px-8"
+      style={{ backgroundColor: '#F5F5F7' }}
       id="magizh-view-section"
     >
-      {/* Visual background atmospheric elements */}
-      <div className="absolute top-1/4 left-1/3 w-80 h-80 bg-rose-500/5 rounded-full filter blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-amber-500/5 rounded-full filter blur-3xl pointer-events-none" />
+      <div className="max-w-7xl mx-auto">
 
-      {/* Hero Teaser Section */}
-      <div className="text-center max-w-3xl mx-auto mb-16 space-y-6">
+        {/* ── HERO SECTION ────────────────────────────────────── */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-6">
+
+          {/* Badge */}
+          <motion.div variants={itemVariants}>
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide"
+              style={{ background: 'rgba(220,38,38,0.08)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.15)' }}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              New Initiative by Nishanth Hospital
+            </span>
+          </motion.div>
+
+          {/* Tamil title */}
+          <motion.h1
+            variants={itemVariants}
+            className="font-bold tracking-tight"
+            style={{
+              fontSize: 'clamp(56px, 10vw, 96px)',
+              lineHeight: 1,
+              background: 'linear-gradient(135deg, #1D1D1F 0%, #DC2626 50%, #F59E0B 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+            id="magizh-brand-title"
+          >
+            மகிழ்
+          </motion.h1>
+
+          {/* Tamil subtitle */}
+          <motion.p
+            variants={itemVariants}
+            className="text-lg sm:text-xl font-medium leading-relaxed"
+            style={{ color: '#1D1D1F' }}
+          >
+            "மகிழ் —{' '}
+            <span style={{
+              background: 'linear-gradient(135deg, #DC2626, #F59E0B)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              fontWeight: 700,
+            }}>
+              குழந்தை ஆசை கொண்ட குடும்பங்களுக்கு
+            </span>
+            {' '}மகிழ்ச்சியை தந்திட விரைவில்"
+          </motion.p>
+
+          {/* English description */}
+          <motion.p
+            variants={itemVariants}
+            className="text-base leading-relaxed"
+            style={{ color: '#6E6E73' }}
+          >
+            An upcoming state-of-the-art fertility &amp; hope pavilion by{' '}
+            <span className="font-semibold" style={{ color: '#1D1D1F' }}>Nishanth Hospital</span>,
+            designed to turn long-awaited dreams of parenthood into absolute reality.
+          </motion.p>
+
+          {/* CTA */}
+          <motion.div variants={itemVariants} className="pt-2">
+            <button
+              onClick={onOpenBooking}
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-sm text-white cursor-pointer transition-all duration-200"
+              style={{ background: '#DC2626', boxShadow: '0 2px 14px rgba(220,38,38,0.28)' }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = '#B91C1C';
+                (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(220,38,38,0.38)';
+                (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = '#DC2626';
+                (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 2px 14px rgba(220,38,38,0.28)';
+                (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)';
+              }}
+            >
+              Inquire About Magizh Care
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </motion.div>
+        </div>
+
+        {/* ── DIVIDER ─────────────────────────────────────────── */}
         <motion.div
           variants={itemVariants}
-          className="inline-flex items-center space-x-2 bg-rose-500/10 border border-rose-500/20 text-rose-300 px-3 py-1 rounded-full text-xs font-sans font-semibold tracking-wider uppercase"
+          className="mb-12 text-center space-y-2"
+          style={{ borderTop: '1px solid #E5E5EA', paddingTop: '48px' }}
         >
-          <Sparkles className="w-3.5 h-3.5 text-rose-500 fill-rose-500/30" />
-          <span>New Initiative By Nishanth Hospital</span>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: '#1D1D1F' }}>
+            Our Comprehensive Clinical Expertise
+          </h2>
+          <p className="text-sm font-semibold uppercase tracking-widest" style={{ color: '#AEAEB2' }}>
+            All expert consultation wings under one roof in Erode
+          </p>
         </motion.div>
 
-        {/* Big Tamil Title */}
-        <motion.h1 
-          variants={itemVariants}
-          className="font-serif text-5xl sm:text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-rose-100 to-amber-200 tracking-tight leading-none" 
-          id="magizh-brand-title"
-        >
-          மகிழ்
-        </motion.h1>
-        
-        {/* Core Subtitle & Teaser (User requested Tamil message) */}
-        <motion.p 
-          variants={itemVariants}
-          className="text-xl sm:text-2xl font-medium text-slate-200 leading-relaxed font-sans px-4"
-        >
-          “மகிழ் — <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-300 font-bold">குழந்தை ஆசை கொண்ட குடும்பங்களுக்கு</span> மகிழ்ச்சியை தந்திட விரைவில்”
-        </motion.p>
-
-        <motion.p 
-          variants={itemVariants}
-          className="text-slate-400 text-sm sm:text-base font-sans font-medium max-w-xl mx-auto"
-        >
-          An upcoming state-of-the-art fertility & hope pavilion by <span className="text-white font-bold font-serif text-sm">Nishanth Hospital</span>, designed to turn long-awaited dreams of parenthood into absolute reality.
-        </motion.p>
-
-        {/* Call to action button */}
-        <motion.div variants={itemVariants} className="pt-4">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onOpenBooking}
-            className="px-8 py-3.5 rounded-full bg-gradient-to-r from-rose-500 via-pink-600 to-amber-500 text-white font-sans font-bold text-sm shadow-xl shadow-rose-500/15 cursor-pointer transition-all duration-300"
-          >
-            Inquire About Magizh Care
-          </motion.button>
-        </motion.div>
-      </div>
-
-      {/* Unified Facility Offerings (with Clean SVG Styled Logos matching user screenshot layout) */}
-      <div className="space-y-8" id="magizh-offerings-grid-block">
-        <motion.div variants={itemVariants} className="text-center space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-serif font-black text-white">Our Comprehensive Clinical Expertise</h2>
-          <p className="text-xs sm:text-sm text-slate-500 font-sans font-semibold uppercase tracking-wider">Presenting all expert consultation wings in Erode under one roof</p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4" id="logos-specialties-layout">
-          {specialties.map((spec, idx) => {
-            const IconComponent = spec.icon;
+        {/* ── SPECIALTIES GRID ────────────────────────────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="logos-specialties-layout">
+          {SPECIALTIES.map((spec, idx) => {
+            const Icon = spec.icon;
             return (
               <motion.div
                 key={spec.id}
                 variants={itemVariants}
-                whileHover={{ y: -6, scale: 1.01 }}
-                className="group relative p-6 rounded-2xl bg-slate-900/40 border border-white/5 hover:border-white/10 hover:bg-slate-900/70 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-default"
+                whileHover={{ y: -4, scale: 1.01 }}
                 id={spec.id}
+                className="group relative p-6 rounded-2xl cursor-default transition-all duration-300 flex flex-col"
+                style={{
+                  background: '#FFFFFF',
+                  border: '1px solid #E5E5EA',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 32px rgba(0,0,0,0.08)';
+                  (e.currentTarget as HTMLDivElement).style.borderColor = spec.border;
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)';
+                  (e.currentTarget as HTMLDivElement).style.borderColor = '#E5E5EA';
+                }}
               >
-                <div>
-                  {/* Decorative badge counting list */}
-                  <div className="absolute top-4 right-4 text-xs font-mono font-bold text-slate-700">
-                    S0{idx + 1}
-                  </div>
-
-                  {/* Header containing SVG-lookalike Lucide icon */}
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 border border-white/10 shrink-0 ${spec.iconBg} group-hover:scale-105 transition-transform duration-300`}>
-                    <IconComponent className="w-6 h-6" />
-                  </div>
-
-                  {/* Title & Description matching patient guide flow */}
-                  <h3 className="text-lg font-sans font-bold text-white group-hover:text-rose-400 transition-colors duration-300 mb-2">
-                    {spec.title}
-                  </h3>
-                  <p className="text-slate-400 text-xs sm:text-sm leading-relaxed font-sans font-medium">
-                    {spec.desc}
-                  </p>
+                {/* Index badge */}
+                <div className="absolute top-4 right-4 text-[10px] font-black font-mono" style={{ color: '#D2D2D7' }}>
+                  {String(idx + 1).padStart(2, '0')}
                 </div>
 
-                {/* Micro visual border slide on hover */}
-                <div className="w-full h-0.5 bg-gradient-to-r from-rose-500 to-amber-400 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left mt-5" />
+                {/* Icon */}
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-105"
+                  style={{ background: spec.bg, border: `1px solid ${spec.border}` }}
+                >
+                  <Icon className="w-5 h-5" style={{ color: spec.color }} />
+                </div>
+
+                {/* Text */}
+                <h3 className="text-base font-bold mb-2 transition-colors duration-300" style={{ color: '#1D1D1F' }}>
+                  {spec.title}
+                </h3>
+                <p className="text-sm leading-relaxed flex-1" style={{ color: '#6E6E73' }}>{spec.desc}</p>
+
+                {/* Bottom accent */}
+                <div
+                  className="w-full h-0.5 rounded-full mt-5 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
+                  style={{ background: `linear-gradient(to right, ${spec.color}, transparent)` }}
+                />
               </motion.div>
             );
           })}
         </div>
+
+        {/* ── TRUST FOOTER ────────────────────────────────────── */}
+        <motion.div
+          variants={itemVariants}
+          className="mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
+          style={{ borderTop: '1px solid #E5E5EA', color: '#6E6E73' }}
+          id="magizh-bottom-strip"
+        >
+          <span className="flex items-center gap-2.5">
+            <Star className="w-4 h-4 fill-current" style={{ color: '#F59E0B' }} />
+            Backed by 25 years of Nishanth Obstetric Emergency Care
+          </span>
+          <span className="font-medium" style={{ color: '#AEAEB2' }}>
+            Maternity · Gynaecology · Paediatrics · Erode
+          </span>
+        </motion.div>
+
       </div>
-
-      {/* Professional Trust Footer Badge Specific to Nishanth hospital */}
-      <motion.div 
-        variants={itemVariants}
-        className="mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-slate-400 gap-4 font-sans" 
-        id="magizh-bottom-strip"
-      >
-        <span className="flex items-center gap-2">
-          <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-          <span>Backed by 25 Years of Nishanth Obstetric Emergency Care</span>
-        </span>
-        <span className="text-slate-500 font-medium">
-          Maternity, Gynecological, and Pediatric Consultations · Erode
-        </span>
-      </motion.div>
-
     </motion.div>
   );
 }
