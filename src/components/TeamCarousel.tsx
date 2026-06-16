@@ -228,11 +228,26 @@ export const TeamCarousel: React.FC<TeamCarouselProps> = ({
     <div
       id="team-carousel-container"
       className={cn(`w-full py-20 flex flex-col items-center justify-center overflow-hidden relative`, className)}
-      style={{ background: background || '#F5F5F7', borderTop: '1px solid #E5E5EA' }}
+      style={{
+        background: background || '#F5F5F7',
+        borderTop: '1px solid #E5E5EA',
+        ...(background ? {} : {
+          backgroundImage: 'url(/frames/nishanth_hospital_frontview.jpeg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center top',
+        }),
+      }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      {/* White wash so the building photo shows softly behind the cards */}
+      {!background && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'rgba(245,245,247,0.86)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)' }}
+        />
+      )}
 
       {/* Title */}
       {title && (

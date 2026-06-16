@@ -74,11 +74,35 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
       initial="hidden"
       animate="visible"
       exit={{ opacity: 0, y: -16 }}
-      className="w-full min-h-screen pt-32 pb-20 px-5 md:px-8"
+      className="w-full min-h-screen pb-20"
       style={{ backgroundColor: '#F5F5F7' }}
       id="about-us-view-section"
     >
-      <div className="max-w-7xl mx-auto">
+      {/* ── FULL-WIDTH HERO IMAGE ────────────────────────────── */}
+      <div className="relative w-full overflow-hidden" style={{ paddingTop: 'clamp(64px, 10.5vh, 100px)' }}>
+        <div className="relative w-full" style={{ height: 'clamp(260px, 42vw, 560px)' }}>
+          <img
+            src="/frames/nishanth_hospital_frontview.jpeg"
+            alt="Nishanth Hospital — Front View"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Gradient overlay: bottom fade into page bg */}
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(245,245,247,0) 60%, rgba(245,245,247,1) 100%)' }}
+          />
+          {/* Bottom label bar */}
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-3 px-5 py-2.5 rounded-2xl"
+            style={{ background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 4px 20px rgba(0,0,0,0.10)' }}>
+            <Heart className="w-4 h-4 flex-shrink-0" style={{ color: '#DC2626' }} />
+            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#1D1D1F' }}>
+              Nishanth Hospital · Erode · Est. 1999
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-5 md:px-8 pt-10">
 
         {/* ── HERO GRID ───────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center mb-20">
@@ -197,10 +221,9 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
                 style={{ background: '#FFFFFF', border: '1px solid #E5E5EA' }}
               >
                 <img
-                  src="https://images.unsplash.com/photo-1584515933487-759f3d46b7e5?q=80&w=800&auto=format&fit=crop"
-                  alt="Nishanth Hospital Maternity Care"
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                  referrerPolicy="no-referrer"
+                  src="/frames/nishanth_hospital_frontview.jpeg"
+                  alt="Nishanth Hospital — Front View"
+                  className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
                 />
                 {/* Bottom label */}
                 <div
