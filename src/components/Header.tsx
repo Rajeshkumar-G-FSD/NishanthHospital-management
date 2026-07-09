@@ -96,7 +96,7 @@ export default function Header({ onContactClick, currentView, onViewChange }: He
               className="hover:text-[#1877F2] transition-colors" aria-label="Facebook">
               <Facebook className="w-3.5 h-3.5" />
             </a>
-            <a href="https://www.instagram.com/browntreeofficial" target="_blank" rel="noopener noreferrer"
+            <a href="https://www.instagram.com/nishanthhospital" target="_blank" rel="noopener noreferrer"
               className="hover:text-[#E1306C] transition-colors" aria-label="Instagram">
               <Instagram className="w-3.5 h-3.5" />
             </a>
