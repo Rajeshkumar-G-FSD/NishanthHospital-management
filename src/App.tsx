@@ -224,7 +224,7 @@ export default function App() {
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#E5E5EA'; (e.currentTarget as HTMLElement).style.color = '#6E6E73'; }}>
                 <Facebook className="w-3.5 h-3.5" />
               </a>
-              <a href="https://www.instagram.com/dr.sruthi_herhealth" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+              <a href="https://www.instagram.com/browntreeofficial" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                 className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
                 style={{ background: '#E5E5EA', color: '#6E6E73' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#E1306C'; (e.currentTarget as HTMLElement).style.color = '#fff'; }}

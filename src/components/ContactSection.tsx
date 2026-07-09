@@ -195,14 +195,14 @@ export default function ContactSection() {
                 <h3 className="text-lg font-bold" style={{ color: '#1D1D1F' }}>Social Connect</h3>
                 <div className="space-y-3">
                   <a
-                    href="https://www.instagram.com/dr.sruthi_herhealth"
+                    href="https://www.instagram.com/browntreeofficial"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2.5 text-sm font-semibold transition-colors group"
                     style={{ color: '#6E6E73' }}
                   >
                     <Instagram className="w-4 h-4 transition-colors" style={{ color: '#E1306C' }} />
-                    <span className="group-hover:text-[#E1306C] transition-colors">@dr.sruthi_herhealth</span>
+                    <span className="group-hover:text-[#E1306C] transition-colors">@browntreeofficial</span>
                     <ExternalLink className="w-3 h-3 ml-auto shrink-0 opacity-40" />
                   </a>
                   <a
