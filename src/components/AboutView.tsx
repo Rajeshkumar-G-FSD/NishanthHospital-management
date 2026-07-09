@@ -1,20 +1,11 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Heart, ShieldCheck, Award, Clock, Star, ArrowRight } from 'lucide-react';
+import ScrollReveal, { staggerContainer, revealUp, revealScale, revealRight } from './ScrollReveal';
 
 interface AboutViewProps {
   onOpenBooking: () => void;
 }
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.05 } }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 80, damping: 16 } }
-};
 
 const STATS = [
   {
@@ -69,49 +60,50 @@ const PILLARS = [
 
 export default function AboutView({ onOpenBooking }: AboutViewProps) {
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      exit={{ opacity: 0, y: -16 }}
+    <div
       className="w-full min-h-screen pb-20"
       style={{ backgroundColor: '#F5F5F7' }}
       id="about-us-view-section"
     >
       {/* ── FULL-WIDTH HERO IMAGE ────────────────────────────── */}
-      <div className="relative w-full overflow-hidden" style={{ paddingTop: 'clamp(64px, 10.5vh, 100px)' }}>
-        <div className="relative w-full" style={{ height: 'clamp(260px, 42vw, 560px)' }}>
-          <img
-            src="/frames/nishanth_hospital_frontview.jpeg"
-            alt="Nishanth Hospital — Front View"
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Gradient overlay: bottom fade into page bg */}
-          <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(245,245,247,0) 60%, rgba(245,245,247,1) 100%)' }}
-          />
-          {/* Bottom label bar */}
-          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-3 px-5 py-2.5 rounded-2xl"
-            style={{ background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 4px 20px rgba(0,0,0,0.10)' }}>
-            <Heart className="w-4 h-4 flex-shrink-0" style={{ color: '#DC2626' }} />
-            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#1D1D1F' }}>
-              Nishanth Hospital · Erode · Est. 1999
-            </span>
+      <ScrollReveal y={20}>
+        <div className="relative w-full overflow-hidden" style={{ paddingTop: 'clamp(64px, 10.5vh, 100px)' }}>
+          <div className="relative w-full" style={{ height: 'clamp(260px, 42vw, 560px)' }}>
+            <img
+              src="/frames/nishanth_hospital_frontview.jpeg"
+              alt="Nishanth Hospital — Front View"
+              className="w-full h-full object-cover object-center"
+            />
+            <div
+              className="absolute inset-0"
+              style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(245,245,247,0) 60%, rgba(245,245,247,1) 100%)' }}
+            />
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-3 px-5 py-2.5 rounded-2xl"
+              style={{ background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(0,0,0,0.07)', boxShadow: '0 4px 20px rgba(0,0,0,0.10)' }}>
+              <Heart className="w-4 h-4 flex-shrink-0" style={{ color: '#DC2626' }} />
+              <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#1D1D1F' }}>
+                Nishanth Hospital · Erode · Est. 1999
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
       <div className="max-w-7xl mx-auto px-5 md:px-8 pt-10">
 
         {/* ── HERO GRID ───────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center mb-20">
 
-          {/* Left: Text */}
-          <div className="lg:col-span-7 space-y-8">
-
+          {/* Left: Text — staggered scroll reveal */}
+          <motion.div
+            className="lg:col-span-7 space-y-8"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+          >
             {/* Badge */}
-            <motion.div variants={itemVariants}>
+            <motion.div variants={revealUp}>
               <span
                 className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide"
                 style={{ background: 'rgba(220,38,38,0.08)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.15)' }}
@@ -122,7 +114,7 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
             </motion.div>
 
             {/* Headline */}
-            <motion.div variants={itemVariants} className="space-y-2">
+            <motion.div variants={revealUp} className="space-y-2">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight" style={{ color: '#1D1D1F', lineHeight: 1.05 }}>
                 Best Women &amp;<br />
                 <span style={{
@@ -139,7 +131,7 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
 
             {/* Body */}
             <motion.p
-              variants={itemVariants}
+              variants={revealUp}
               className="text-base md:text-lg leading-relaxed"
               style={{ color: '#6E6E73' }}
             >
@@ -152,7 +144,7 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
             </motion.p>
 
             {/* Stats cards */}
-            <motion.div variants={itemVariants} className="grid grid-cols-3 gap-4">
+            <motion.div variants={revealUp} className="grid grid-cols-3 gap-4">
               {STATS.map((stat) => {
                 const Icon = stat.icon;
                 return (
@@ -173,7 +165,7 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
             </motion.div>
 
             {/* CTAs */}
-            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 pt-1">
+            <motion.div variants={revealUp} className="flex flex-col sm:flex-row gap-3 pt-1">
               <button
                 onClick={onOpenBooking}
                 className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-sm text-white cursor-pointer transition-all duration-200"
@@ -206,12 +198,18 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
                 Emergency: +91 98429 60060
               </a>
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* Right: Image */}
-          <motion.div variants={itemVariants} className="lg:col-span-5" id="about-hero-image-wrapper">
+          {/* Right: Image — slides in from right */}
+          <motion.div
+            className="lg:col-span-5"
+            id="about-hero-image-wrapper"
+            variants={revealRight}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+          >
             <div className="relative">
-              {/* Glow */}
               <div
                 className="absolute -inset-2 rounded-3xl blur-xl opacity-30 pointer-events-none"
                 style={{ background: 'linear-gradient(135deg, #DC2626, #F59E0B)' }}
@@ -225,7 +223,6 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
                   alt="Nishanth Hospital — Front View"
                   className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
                 />
-                {/* Bottom label */}
                 <div
                   className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl flex items-center justify-between"
                   style={{
@@ -248,15 +245,19 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
           </motion.div>
         </div>
 
-        {/* ── PILLARS STRIP ──────────────────────────────────── */}
+        {/* ── PILLARS STRIP — stagger each card on scroll ──────── */}
         <motion.div
-          variants={itemVariants}
           className="pt-12 grid grid-cols-1 md:grid-cols-3 gap-5"
           style={{ borderTop: '1px solid #E5E5EA' }}
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           {PILLARS.map((p) => (
-            <div
+            <motion.div
               key={p.num}
+              variants={revealScale}
               className="group p-6 rounded-2xl cursor-default transition-all duration-300"
               style={{ background: '#FFFFFF', border: '1px solid #E5E5EA', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
               onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; }}
@@ -265,11 +266,11 @@ export default function AboutView({ onOpenBooking }: AboutViewProps) {
               <span className="text-xs font-black font-mono" style={{ color: p.color }}>{p.num}</span>
               <h5 className="text-base font-bold mt-2 mb-2" style={{ color: '#1D1D1F' }}>{p.title}</h5>
               <p className="text-sm leading-relaxed" style={{ color: '#6E6E73' }}>{p.desc}</p>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
       </div>
-    </motion.div>
+    </div>
   );
 }

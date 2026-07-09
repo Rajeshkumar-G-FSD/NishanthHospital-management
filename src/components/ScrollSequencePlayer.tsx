@@ -122,6 +122,24 @@ export default function ScrollSequencePlayer({ onOpenBooking }: ScrollSequencePl
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, ox, oy, dw, dh);
+
+    // Cover KlingAI watermark in bottom-right corner by re-drawing that region blurred
+    if (dw > 0 && dh > 0) {
+      const wmX = cw * 0.68;
+      const wmY = ch * 0.82;
+      const wmW = cw - wmX;
+      const wmH = ch - wmY;
+      const srcX = Math.max(0, ((wmX - ox) / dw) * img.naturalWidth);
+      const srcY = Math.max(0, ((wmY - oy) / dh) * img.naturalHeight);
+      const srcW = Math.min(img.naturalWidth - srcX, (wmW / dw) * img.naturalWidth);
+      const srcH = Math.min(img.naturalHeight - srcY, (wmH / dh) * img.naturalHeight);
+      if (srcW > 0 && srcH > 0) {
+        ctx.save();
+        ctx.filter = 'blur(28px)';
+        ctx.drawImage(img, srcX, srcY, srcW, srcH, wmX, wmY, wmW, wmH);
+        ctx.restore();
+      }
+    }
   };
 
   // Resize canvas to match physical pixels (called once on mount + on window resize).

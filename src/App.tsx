@@ -10,6 +10,7 @@ import WhyChooseView from './components/WhyChooseView';
 import MagizhView from './components/MagizhView';
 import ContactSection from './components/ContactSection';
 import DoctorPortal from './components/DoctorPortal';
+import ScrollReveal from './components/ScrollReveal';
 
 const TEAM_MEMBERS: TeamMember[] = [
   {
@@ -111,33 +112,35 @@ export default function App() {
           {currentView === 'home' || currentView === 'contact' ? (
             <motion.div
               key="home"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="w-full flex flex-col"
             >
               <ScrollSequencePlayer onOpenBooking={handleOpenModal} />
 
-              <TeamCarousel
-                members={TEAM_MEMBERS}
-                title="Meet Our Specialists"
-                titleSize="md"
-                autoPlay={5000}
-                grayscaleEffect={false}
-                className="relative z-20"
-                onBookClick={(doctorName) => handleOpenModal(doctorName)}
-              />
+              <ScrollReveal y={48}>
+                <TeamCarousel
+                  members={TEAM_MEMBERS}
+                  title="Meet Our Specialists"
+                  titleSize="md"
+                  autoPlay={5000}
+                  grayscaleEffect={false}
+                  className="relative z-20"
+                  onBookClick={(doctorName) => handleOpenModal(doctorName)}
+                />
+              </ScrollReveal>
 
               <ContactSection />
             </motion.div>
           ) : currentView === 'doctors' ? (
             <motion.div
               key="doctors"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="w-full pt-32 pb-16 flex flex-col justify-center relative min-h-[85vh]"
               style={{ backgroundColor: '#F5F5F7' }}
             >
@@ -154,10 +157,10 @@ export default function App() {
           ) : currentView === 'about' ? (
             <motion.div
               key="about"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="w-full"
             >
               <AboutView onOpenBooking={handleOpenModal} />
@@ -165,10 +168,10 @@ export default function App() {
           ) : currentView === 'why-choose' ? (
             <motion.div
               key="why-choose"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="w-full"
             >
               <WhyChooseView onOpenBooking={handleOpenModal} />
@@ -176,10 +179,10 @@ export default function App() {
           ) : currentView === 'magizh' ? (
             <motion.div
               key="magizh"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="w-full"
             >
               <MagizhView onOpenBooking={handleOpenModal} />
@@ -187,10 +190,10 @@ export default function App() {
           ) : (
             <motion.div
               key="doctor-portal"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: 'easeInOut' }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="w-full"
             >
               <DoctorPortal />

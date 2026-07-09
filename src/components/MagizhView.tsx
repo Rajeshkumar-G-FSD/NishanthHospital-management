@@ -1,20 +1,11 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Sparkles, Heart, Baby, ShieldAlert, HeartPulse, ShieldCheck, Microscope, UserCheck, Star, ArrowRight } from 'lucide-react';
+import ScrollReveal, { staggerContainer, revealUp, revealScale } from './ScrollReveal';
 
 interface MagizhViewProps {
   onOpenBooking: () => void;
 }
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.05 } }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 80, damping: 16 } }
-};
 
 const SPECIALTIES = [
   {
@@ -84,11 +75,7 @@ const SPECIALTIES = [
 
 export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      exit={{ opacity: 0, y: -16 }}
+    <div
       className="w-full min-h-screen pt-32 pb-20 px-5 md:px-8"
       style={{ backgroundColor: '#F5F5F7' }}
       id="magizh-view-section"
@@ -96,10 +83,15 @@ export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
       <div className="max-w-7xl mx-auto">
 
         {/* ── HERO SECTION ────────────────────────────────────── */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-6">
-
+        <motion.div
+          className="text-center max-w-3xl mx-auto mb-16 space-y-6"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
           {/* Badge */}
-          <motion.div variants={itemVariants}>
+          <motion.div variants={revealUp}>
             <span
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide"
               style={{ background: 'rgba(220,38,38,0.08)', color: '#DC2626', border: '1px solid rgba(220,38,38,0.15)' }}
@@ -111,7 +103,7 @@ export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
 
           {/* Tamil title */}
           <motion.h1
-            variants={itemVariants}
+            variants={revealUp}
             className="font-bold tracking-tight"
             style={{
               fontSize: 'clamp(56px, 10vw, 96px)',
@@ -128,7 +120,7 @@ export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
 
           {/* Tamil subtitle */}
           <motion.p
-            variants={itemVariants}
+            variants={revealUp}
             className="text-lg sm:text-xl font-medium leading-relaxed"
             style={{ color: '#1D1D1F' }}
           >
@@ -147,7 +139,7 @@ export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
 
           {/* English description */}
           <motion.p
-            variants={itemVariants}
+            variants={revealUp}
             className="text-base leading-relaxed"
             style={{ color: '#6E6E73' }}
           >
@@ -157,7 +149,7 @@ export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
           </motion.p>
 
           {/* CTA */}
-          <motion.div variants={itemVariants} className="pt-2">
+          <motion.div variants={revealUp} className="pt-2">
             <button
               onClick={onOpenBooking}
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-sm text-white cursor-pointer transition-all duration-200"
@@ -177,30 +169,38 @@ export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
               <ArrowRight className="w-4 h-4" />
             </button>
           </motion.div>
-        </div>
-
-        {/* ── DIVIDER ─────────────────────────────────────────── */}
-        <motion.div
-          variants={itemVariants}
-          className="mb-12 text-center space-y-2"
-          style={{ borderTop: '1px solid #E5E5EA', paddingTop: '48px' }}
-        >
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: '#1D1D1F' }}>
-            Our Comprehensive Clinical Expertise
-          </h2>
-          <p className="text-sm font-semibold uppercase tracking-widest" style={{ color: '#AEAEB2' }}>
-            All expert consultation wings under one roof in Erode
-          </p>
         </motion.div>
 
-        {/* ── SPECIALTIES GRID ────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="logos-specialties-layout">
+        {/* ── DIVIDER ─────────────────────────────────────────── */}
+        <ScrollReveal>
+          <div
+            className="mb-12 text-center space-y-2"
+            style={{ borderTop: '1px solid #E5E5EA', paddingTop: '48px' }}
+          >
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: '#1D1D1F' }}>
+              Our Comprehensive Clinical Expertise
+            </h2>
+            <p className="text-sm font-semibold uppercase tracking-widest" style={{ color: '#AEAEB2' }}>
+              All expert consultation wings under one roof in Erode
+            </p>
+          </div>
+        </ScrollReveal>
+
+        {/* ── SPECIALTIES GRID — stagger each card on scroll ──── */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+          id="logos-specialties-layout"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
           {SPECIALTIES.map((spec, idx) => {
             const Icon = spec.icon;
             return (
               <motion.div
                 key={spec.id}
-                variants={itemVariants}
+                variants={revealScale}
                 whileHover={{ y: -4, scale: 1.01 }}
                 id={spec.id}
                 className="group relative p-6 rounded-2xl cursor-default transition-all duration-300 flex flex-col"
@@ -245,25 +245,26 @@ export default function MagizhView({ onOpenBooking }: MagizhViewProps) {
               </motion.div>
             );
           })}
-        </div>
-
-        {/* ── TRUST FOOTER ────────────────────────────────────── */}
-        <motion.div
-          variants={itemVariants}
-          className="mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
-          style={{ borderTop: '1px solid #E5E5EA', color: '#6E6E73' }}
-          id="magizh-bottom-strip"
-        >
-          <span className="flex items-center gap-2.5">
-            <Star className="w-4 h-4 fill-current" style={{ color: '#F59E0B' }} />
-            Backed by 25 years of Nishanth Obstetric Emergency Care
-          </span>
-          <span className="font-medium" style={{ color: '#AEAEB2' }}>
-            Maternity · Gynaecology · Paediatrics · Erode
-          </span>
         </motion.div>
 
+        {/* ── TRUST FOOTER ────────────────────────────────────── */}
+        <ScrollReveal delay={0.1}>
+          <div
+            className="mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
+            style={{ borderTop: '1px solid #E5E5EA', color: '#6E6E73' }}
+            id="magizh-bottom-strip"
+          >
+            <span className="flex items-center gap-2.5">
+              <Star className="w-4 h-4 fill-current" style={{ color: '#F59E0B' }} />
+              Backed by 25 years of Nishanth Obstetric Emergency Care
+            </span>
+            <span className="font-medium" style={{ color: '#AEAEB2' }}>
+              Maternity · Gynaecology · Paediatrics · Erode
+            </span>
+          </div>
+        </ScrollReveal>
+
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -1,20 +1,11 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Calendar, Award, Sparkles, HeartHandshake, Baby, Syringe, Layers, Activity, Check, ArrowRight } from 'lucide-react';
+import ScrollReveal, { staggerContainer, revealUp, revealScale } from './ScrollReveal';
 
 interface WhyChooseViewProps {
   onOpenBooking: () => void;
 }
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.05 } }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 80, damping: 16 } }
-};
 
 const STATS = [
   {
@@ -68,11 +59,7 @@ const ASSURANCES = [
 
 export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      exit={{ opacity: 0, y: -16 }}
+    <div
       className="w-full min-h-screen pt-32 pb-20 px-5 md:px-8"
       style={{ backgroundColor: '#F5F5F7' }}
       id="why-choose-us-section"
@@ -80,15 +67,23 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
       <div className="max-w-7xl mx-auto">
 
         {/* ── SECTION HEADER ──────────────────────────────────── */}
-        <motion.div variants={itemVariants} className="text-center max-w-2xl mx-auto mb-14 space-y-4">
-          <span
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide"
-            style={{ background: 'rgba(22,163,74,0.08)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.15)' }}
-          >
-            <HeartHandshake className="w-3.5 h-3.5" />
-            Why Choose Nishanth Hospital
-          </span>
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight" style={{ color: '#1D1D1F' }}>
+        <motion.div
+          className="text-center max-w-2xl mx-auto mb-14 space-y-4"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
+          <motion.div variants={revealUp}>
+            <span
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide"
+              style={{ background: 'rgba(22,163,74,0.08)', color: '#16A34A', border: '1px solid rgba(22,163,74,0.15)' }}
+            >
+              <HeartHandshake className="w-3.5 h-3.5" />
+              Why Choose Nishanth Hospital
+            </span>
+          </motion.div>
+          <motion.h1 variants={revealUp} className="text-4xl sm:text-5xl font-bold tracking-tight" style={{ color: '#1D1D1F' }}>
             Excellence &amp;{' '}
             <span style={{
               background: 'linear-gradient(135deg, #16A34A 0%, #007AFF 100%)',
@@ -98,19 +93,26 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
             }}>
               Trusted Experience
             </span>
-          </h1>
-          <p className="text-base md:text-lg" style={{ color: '#6E6E73' }}>
+          </motion.h1>
+          <motion.p variants={revealUp} className="text-base md:text-lg" style={{ color: '#6E6E73' }}>
             Three decades of obstetric excellence, paediatric mastery, and compassionate care — all under one roof in Erode.
-          </p>
+          </motion.p>
         </motion.div>
 
-        {/* ── STATS BENTO GRID ────────────────────────────────── */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-12">
+        {/* ── STATS BENTO GRID ─ each card reveals on scroll ───── */}
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-12"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+        >
           {STATS.map((stat, idx) => {
             const Icon = stat.icon;
             return (
               <motion.div
                 key={stat.id}
+                variants={revealScale}
                 whileHover={{ y: -4, scale: 1.01 }}
                 id={stat.id}
                 className="group relative p-8 rounded-2xl cursor-default transition-all duration-300"
@@ -122,7 +124,6 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
                 onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = `0 8px 32px rgba(0,0,0,0.08)`; (e.currentTarget as HTMLDivElement).style.borderColor = stat.accentBorder; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'; (e.currentTarget as HTMLDivElement).style.borderColor = '#E5E5EA'; }}
               >
-                {/* Background number watermark */}
                 <div
                   className="absolute top-4 right-5 font-black text-6xl font-mono pointer-events-none select-none transition-all duration-500"
                   style={{ color: 'rgba(0,0,0,0.03)' }}
@@ -130,7 +131,6 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
                   {String(idx + 1).padStart(2, '0')}
                 </div>
 
-                {/* Icon */}
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-105"
                   style={{ background: stat.accentBg, border: `1px solid ${stat.accentBorder}` }}
@@ -138,14 +138,12 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
                   <Icon className="w-5 h-5" style={{ color: stat.accentColor }} />
                 </div>
 
-                {/* Value */}
                 <div className="text-4xl sm:text-5xl font-bold tracking-tight mb-1" style={{ color: '#1D1D1F' }}>
                   {stat.value}
                 </div>
                 <div className="text-base font-semibold mb-2" style={{ color: '#1D1D1F' }}>{stat.label}</div>
                 <p className="text-sm leading-relaxed" style={{ color: '#6E6E73' }}>{stat.desc}</p>
 
-                {/* Bottom accent line */}
                 <div
                   className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-2xl scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
                   style={{ background: `linear-gradient(to right, ${stat.accentColor}, transparent)` }}
@@ -157,11 +155,15 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
 
         {/* ── BOTTOM SECTION: Availability + Assurances + CTA ── */}
         <motion.div
-          variants={itemVariants}
           className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
         >
           {/* 24×7 availability card */}
-          <div
+          <motion.div
+            variants={revealScale}
             className="p-8 rounded-2xl flex flex-col justify-between"
             style={{ background: 'linear-gradient(135deg, rgba(22,163,74,0.07) 0%, rgba(22,163,74,0.03) 100%)', border: '1px solid rgba(22,163,74,0.15)' }}
           >
@@ -177,10 +179,11 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
             <div className="mt-6 pt-4" style={{ borderTop: '1px solid rgba(22,163,74,0.12)' }}>
               <span className="text-xs font-semibold" style={{ color: '#16A34A' }}>● Live Emergency Support</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Assurances list */}
-          <div
+          <motion.div
+            variants={revealScale}
             className="p-8 rounded-2xl"
             style={{ background: '#FFFFFF', border: '1px solid #E5E5EA', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
           >
@@ -195,10 +198,11 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* CTA card */}
-          <div
+          <motion.div
+            variants={revealScale}
             className="p-8 rounded-2xl flex flex-col justify-between"
             style={{ background: 'linear-gradient(135deg, #DC2626 0%, #B91C1C 100%)', boxShadow: '0 4px 24px rgba(220,38,38,0.2)' }}
           >
@@ -229,31 +233,32 @@ export default function WhyChooseView({ onOpenBooking }: WhyChooseViewProps) {
                 Emergency: +91 98429 60060
               </a>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* ── BOTTOM TRUST STRIP ──────────────────────────────── */}
-        <motion.div
-          variants={itemVariants}
-          className="mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-5 text-sm"
-          style={{ borderTop: '1px solid #E5E5EA', color: '#6E6E73' }}
-          id="why-choose-bottom-strip"
-        >
-          <span className="flex items-center gap-2.5">
-            <Award className="w-4 h-4" style={{ color: '#F59E0B' }} />
-            Accredited Clinical Quality Practices
-          </span>
-          <span className="flex items-center gap-2.5">
-            <Calendar className="w-4 h-4" style={{ color: '#DC2626' }} />
-            Trusted across Erode &amp; surrounding regions since 2001
-          </span>
-          <span className="flex items-center gap-2.5">
-            <Activity className="w-4 h-4" style={{ color: '#16A34A' }} />
-            Advanced paediatric ventilation mechanisms
-          </span>
-        </motion.div>
+        <ScrollReveal delay={0.1}>
+          <div
+            className="mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-5 text-sm"
+            style={{ borderTop: '1px solid #E5E5EA', color: '#6E6E73' }}
+            id="why-choose-bottom-strip"
+          >
+            <span className="flex items-center gap-2.5">
+              <Award className="w-4 h-4" style={{ color: '#F59E0B' }} />
+              Accredited Clinical Quality Practices
+            </span>
+            <span className="flex items-center gap-2.5">
+              <Calendar className="w-4 h-4" style={{ color: '#DC2626' }} />
+              Trusted across Erode &amp; surrounding regions since 2001
+            </span>
+            <span className="flex items-center gap-2.5">
+              <Activity className="w-4 h-4" style={{ color: '#16A34A' }} />
+              Advanced paediatric ventilation mechanisms
+            </span>
+          </div>
+        </ScrollReveal>
 
       </div>
-    </motion.div>
+    </div>
   );
 }
